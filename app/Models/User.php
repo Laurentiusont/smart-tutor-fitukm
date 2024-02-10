@@ -28,7 +28,6 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'password',
         'email',
-        'role_guid',
     ];
 
     /**
@@ -70,13 +69,6 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    /**
-     * ROLE OBJECT
-     */
-    // public function role()
-    // {
-    //     return $this->belongsToMany(Role::class);
-    // }
     /**
      * JAWABAN OBJECT
      */

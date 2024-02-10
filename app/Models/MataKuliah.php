@@ -31,7 +31,7 @@ class MataKuliah extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'deskripsi', 'kelas'
+        'kode', 'nama', 'deskripsi', 'kelas'
     ];
 
     /**
@@ -54,4 +54,11 @@ class MataKuliah extends Model
         'updated_at' => 'datetime',
         // 'status' => StatusEnum::class
     ];
+    /**
+     * MATERI OBJECT
+     */
+    public function materi()
+    {
+        return $this->hasMany(Materi::class);
+    }
 }

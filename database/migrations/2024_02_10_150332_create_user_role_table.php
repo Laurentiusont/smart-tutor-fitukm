@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jawaban_mahasiswas', function (Blueprint $table) {
-            $table->id();
+        Schema::create('user_role', function (Blueprint $table) {
+            $table->increments('id');
+            $table->char('role_guid', 36);
+            $table->char('users_id', 10);
+            $table->foreign('users_id')->references('id')->on('users');
+            $table->foreign('role_guid')->references('guid')->on('role')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jawaban_mahasiswas');
+        Schema::dropIfExists('user_role');
     }
 };

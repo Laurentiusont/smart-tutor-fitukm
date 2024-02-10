@@ -86,6 +86,13 @@
                 $('#generateQuestionModal').modal('show');
             });
 
+            function deleteRow() {
+                $(this).closest('tr').remove(); // Menghapus baris yang berisi tombol yang ditekan
+            }
+
+            // Tambahkan event listener untuk tombol delete di luar event handler form
+            $(document).on('click', '.delete-btn', deleteRow);
+
             $('#generateQuestionForm').submit(function(event) {
                 $('#generateQuestionModal').modal(
                     'hide');
@@ -114,29 +121,31 @@
                             data: 'pertanyaan',
                             title: 'Pertanyaan',
                             render: function(data, type, row) {
-                                return "<div class='text-wrap'>" + data + "</div>"
+                                return "<div class='text-wrap' contenteditable style='text-align: justify;'>" +
+                                    data + "</div>"
                             }
                         },
                         {
                             data: 'jawaban',
                             title: 'Jawaban',
                             render: function(data, type, row) {
-                                return "<div class='text-wrap'>" + data + "</div>"
+                                return "<div class='text-wrap' contenteditable style='text-align: justify;'>" +
+                                    data + "</div>"
                             }
                         },
                         {
                             data: 'kategori',
                             title: 'Kategori',
                             render: function(data, type, row) {
-                                return "<div class='text-wrap'>" + data + "</div>"
+                                return "<div class='text-wrap' contenteditable>" + data +
+                                    "</div>"
                             }
                         },
                         {
                             data: null,
                             title: "Actions",
                             render: function(data, type, row) {
-                                return '<a href="#" class="edit-btn" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
-                                    '<a href="#" class="delete-btn" style="text-decoration: none;"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
+                                return '<a role="button" id="delete" class="delete-btn" style="text-decoration: none;"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
                             },
 
                         },
@@ -180,7 +189,7 @@
 
                         $.ajax({
                             type: "POST",
-                            url: "{{ env('URL_API') }}/api/v1/question/save",
+                            url: "{{ env('URL_API') }}/api/v1/question",
                             data: {
                                 'pertanyaan': rowData.pertanyaan,
                                 'jawaban': rowData.jawaban,
@@ -213,23 +222,6 @@
                     });
                 });
 
-                // $.ajax({
-                //     url: "{{ env('URL_API') }}/api/v1/question/save",
-                //     type: "POST",
-                //     contentType: 'application/json',
-                //     headers: {
-                //         "Authorization": "Bearer {{ $token }}"
-                //     },
-                //     data: JSON.stringify(dataToSend),
-                //     success: function(response) {
-                //         console.log(response);
-                //         alert("Data berhasil disimpan!");
-                //     },
-                //     error: function(xhr, status, error) {
-                //         console.error(xhr.responseText);
-                //         alert("Terjadi kesalahan saat menyimpan data.");
-                //     }
-                // });
 
 
             });

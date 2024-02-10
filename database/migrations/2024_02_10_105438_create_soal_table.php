@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('pertanyaan');
             $table->text('jawaban');
             $table->char('kategori', 30);
+            $table->char('materi_guid', 36);
+            $table->foreign('materi_guid')->references('guid')->on('materi')->onDelete('cascade');
             $table->timestamps();
         });
     }

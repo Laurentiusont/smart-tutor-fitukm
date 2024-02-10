@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JawabanMahasiswa;
+use App\Models\Jawaban;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Session\Session;
 
-class JawabanMahasiswaController extends Controller
+class JawabanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +36,7 @@ class JawabanMahasiswaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(JawabanMahasiswa $jawabanMahasiswa)
+    public function show(Jawaban $jawaban)
     {
         //
     }
@@ -42,7 +44,7 @@ class JawabanMahasiswaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(JawabanMahasiswa $jawabanMahasiswa)
+    public function edit(Jawaban $jawaban)
     {
         //
     }
@@ -50,7 +52,7 @@ class JawabanMahasiswaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, JawabanMahasiswa $jawabanMahasiswa)
+    public function update(Request $request, Jawaban $jawaban)
     {
         //
     }
@@ -58,7 +60,7 @@ class JawabanMahasiswaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JawabanMahasiswa $jawabanMahasiswa)
+    public function destroy(Jawaban $jawaban)
     {
         //
     }

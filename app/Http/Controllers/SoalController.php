@@ -7,16 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Yajra\DataTables\Facades\DataTables;
-
-// use Symfony\Component\Process\Process;
 
 class SoalController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         $session = new Session();
@@ -31,29 +25,13 @@ class SoalController extends Controller
     }
     public function generateData(Request $request)
     {
-        // return $request->get('question');
         $process = Process::forever()->run(
             ['C:\Users\ontos\AppData\Local\Programs\Python\Python311\python.exe', 'D:\Smart Tutor\main.py', $request->get('question')]
         );
-        // $process = Process::forever()->run(
-        //     ['C:\Users\ontos\AppData\Local\Programs\Python\Python311\python.exe', 'D:\Smart Tutor\main.py', 'Unsupervised Learning, Reinforcement Learning, Deep Learning, Natural Language Processing (NLP)']
-        // );
-        // $process->run();
-
-        // if (!$process->output()) {
-        //     throw new ProcessFailedException($process);
-        // }
 
         $data = $process->output();
-        // dd($data);
-        // $data = $data['pertanyaan'];
         $data = json_decode($data, true);
         return ResponseController::getResponse($data['pertanyaan'], 200, 'Success');
-        // $dataTable = DataTables::of($data)
-        //     ->addIndexColumn()
-        //     ->make(true);
-
-        // return $dataTable;
     }
 
     public function insertData(Request $request)
@@ -76,51 +54,53 @@ class SoalController extends Controller
         return ResponseController::getResponse($data, 200, 'Success');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function showData()
     {
-        //
-    }
+        $data = Soal::all();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        return ResponseController::getResponse($data, 200, 'Success');
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Soal $soal)
+    public function getData($guid)
     {
-        //
+        $data = Soal::where('guid', '=', $guid)->first();
+
+        return ResponseController::getResponse($data, 200, 'Success');
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Soal $soal)
+    public function updateData(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'guid' => 'required|string|max:36',
+            'jawaban' => 'required|string',
+            'kategori' => 'required|string|max:40',
+        ], MessagesController::messages());
+
+        if ($validator->fails()) {
+            return ResponseController::getResponse(null, 422, $validator->errors()->first());
+        }
+        /// GET DATA
+        $data = Soal::where('guid', '=', $request['guid'])->first();
+
+        if (!isset($data)) {
+            return ResponseController::getResponse(null, 400, "Data not found");
+        }
+        /// UPDATE DATA
+        $data->pertanyaan = $request['pertanyaan'];
+        $data->jawaban = $request['jawaban'];
+        $data->kategori = $request['kategori'];
+        $data->save();
+
+        return ResponseController::getResponse($data, 200, 'Success');
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Soal $soal)
+    public function deleteData($guid)
     {
-        //
-    }
+        $data = Soal::where('guid', '=', $guid)->first();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Soal $soal)
-    {
-        //
+        if (!isset($data)) {
+            return ResponseController::getResponse(null, 400, "Data not found");
+        }
+
+        $data->delete();
+
+        return ResponseController::getResponse(null, 200, 'Success');
     }
 }

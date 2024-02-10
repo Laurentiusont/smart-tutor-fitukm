@@ -17,6 +17,7 @@ return new class extends Migration
             $table->char('users_id', 10);
             $table->foreign('users_id')->references('id')->on('users');
             $table->foreign('mata_kuliah_kode')->references('kode')->on('mata_kuliah')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

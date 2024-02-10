@@ -9,13 +9,10 @@
                         <div class="card-header pb-0">
                             <div class="row align-items-center d-flex">
                                 <div class="col-md-9">
-                                    <h6>QUESTION</h6>
+                                    <h6>LIST QUESTION</h6>
                                 </div>
-                                <div class="col-md-3"><a class="btn btn-primary w-100" role="button" id="generate">Generate
+                                <div class="col-md-3"><a class="btn btn-primary w-100" role="button" id="add">Add
                                         Question<i class="" style="text-decoration: none; margin-left: 10px;"></i></a>
-                                </div>
-                                <div class="col-md-3">
-                                    <button id="save-btn" class="btn btn-success w-100">Save</button>
                                 </div>
 
                             </div>
@@ -54,21 +51,93 @@
             </div>
 
         </div>
-
-
-        <div class="modal fade" id="generateQuestionModal" tabindex="-1" aria-labelledby="generateQuestionModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
+        <!-- Modal Add Question -->
+        <div class="modal fade" id="modalAdd" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="generateQuestionModalLabel">Generate Question</h5>
+                        <h5 class="modal-title">Add Question</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="generateQuestionForm">
+                        <form id="add-form">
                             <div class="mb-3">
-                                <label for="questionInput" class="form-label">Question</label>
-                                <input type="text" class="form-control" id="questionInput" required>
+                                <label for="add-question" class="form-label">Pertanyaan</label>
+                                <textarea class="form-control" id="add-question" name="add-question" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="add-answer" class="form-label">Jawaban</label>
+                                <textarea class="form-control" id="add-answer" name="add-answer" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="add-category" class="form-label">Kategori</label>
+                                <select class="form-select" id="add-category" name="add-category" required>
+                                    <option value="">Pilih Kategori</option>
+                                    <option value="Understanding">Understanding</option>
+                                    <option value="Remembering">Remembering</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Delete-->
+        <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCenterTitle">Delete Data</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col mb-3">
+                                <p>Are you sure want to delete this data?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <form id="delete-form">
+                            <input id="delete-id" class="d-none" />
+                            <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" type="button"
+                                data-bs-dismiss="modal">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Edit-->
+        <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Question</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="edit-form">
+                            <input type="hidden" id="edit-id" name="edit-id">
+                            <div class="mb-3">
+                                <label for="guid" class="form-label">guid</label>
+                                <input type="text" class="form-control" id="guid" name="guid" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-question" class="form-label">Pertanyaan</label>
+                                <textarea class="form-control" id="edit-question" name="edit-question" rows="3" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-answer" class="form-label">Jawaban</label>
+                                <textarea class="form-control" id="edit-answer" name="edit-answer" rows="3" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-category" class="form-label">Kategori</label>
+                                <input type="text" class="form-control" id="edit-category" name="edit-category"
+                                    required>
                             </div>
                             <!-- Add other input fields as needed -->
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -80,163 +149,218 @@
     </main>
 @endsection
 @section('custom-javascript')
-    {{-- <script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function() {
             $('#generate').click(function() {
                 $('#generateQuestionModal').modal('show');
             });
-
-            $('#generateQuestionForm').submit(function(event) {
-                $('#generateQuestionModal').modal(
-                    'hide');
-                event.preventDefault();
-
-                var question = $('#questionInput').val();
-                $('#table-data').DataTable({
-                    "dom": "lrt",
-                    "bFilter": false,
-                    "searching": false,
-                    "destroy": true,
-                    "processing": true,
-                    "serverSide": true,
-                    "ajax": {
-                        "url": "{{ env('URL_API') }}/api/v1/question/generate",
-                        "type": "GET",
-                        'beforeSend': function(request) {
-                            request.setRequestHeader("Authorization",
-                                "Bearer {{ $token }}");
-                        },
-                        "data": {
-                            question: question
-                        },
+            $('#table-data').DataTable({
+                "dom": "lrt",
+                "bFilter": false,
+                "searching": false,
+                "destroy": true,
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "{{ env('URL_API') }}/api/v1/question",
+                    "type": "GET",
+                    'beforeSend': function(request) {
+                        request.setRequestHeader("Authorization",
+                            "Bearer {{ $token }}");
                     },
-                    "columns": [{
-                            data: 'pertanyaan',
-                            title: 'Pertanyaan',
-                            render: function(data, type, row) {
-                                return "<div class='text-wrap'>" + data + "</div>"
-                            }
-                        },
-                        {
-                            data: 'jawaban',
-                            title: 'Jawaban',
-                            render: function(data, type, row) {
-                                return "<div class='text-wrap'>" + data + "</div>"
-                            }
-                        },
-                        {
-                            data: 'kategori',
-                            title: 'Kategori',
-                            render: function(data, type, row) {
-                                return "<div class='text-wrap'>" + data + "</div>"
-                            }
-                        },
-                        {
-                            data: null,
-                            title: "Actions",
-                            render: function(data, type, row) {
-                                return '<a href="#" class="edit-btn" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
-                                    '<a href="#" class="delete-btn" style="text-decoration: none;"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
-                            },
-
-                        },
-                    ],
-                    "columnDefs": [{
-                        "targets": [3], // Actions column
-                        "orderable": false,
-                        "searchable": false
-                    }],
-                    "language": {
-                        "emptyTable": "No data available in table",
-                        "info": "Showing _START_ to _END_ of _TOTAL_ entries",
-                        "infoEmpty": "Showing 0 to 0 of 0 entries",
-                        "lengthMenu": "Show _MENU_ entries",
-                        "loadingRecords": "Loading...",
-                        "processing": "Processing...",
-                        "zeroRecords": "No matching records found",
-                        "paginate": {
-                            "first": "First",
-                            "last": "Last",
-                            "next": "Next",
-                            "previous": "Previous"
-                        },
-                        "aria": {
-                            "sortAscending": ": activate to sort column ascending",
-                            "sortDescending": ": activate to sort column descending"
+                    "data": {},
+                },
+                "columns": [{
+                        data: 'pertanyaan',
+                        title: 'Pertanyaan',
+                        render: function(data, type, row) {
+                            return "<div class='text-wrap' style='text-align: justify;'>" + data +
+                                "</div>"
                         }
                     },
-                    "scrollX": false,
-                    "autoWidth": false,
+                    {
+                        data: 'jawaban',
+                        title: 'Jawaban',
+                        render: function(data, type, row) {
+                            return "<div class='text-wrap' style='text-align: justify;'>" + data +
+                                "</div>"
+                        }
+                    },
+                    {
+                        data: 'kategori',
+                        title: 'Kategori',
+                        render: function(data, type, row) {
+                            return "<div class='text-wrap'>" + data + "</div>"
+                        }
+                    },
+                    {
+                        data: null,
+                        title: "Actions",
+                        render: function(data, type, row) {
+                            return '<a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"data-guid="' +
+                                data['guid'] +
+                                '"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
+                                '<a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="' +
+                                data['guid'] +
+                                '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
+                        },
 
+                    },
+                ],
+                "columnDefs": [{
+                    "targets": [3], // Actions column
+                    "orderable": false,
+                    "searchable": false
+                }],
+                "language": {
+                    "emptyTable": "No data available in table",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "infoEmpty": "Showing 0 to 0 of 0 entries",
+                    "lengthMenu": "Show _MENU_ entries",
+                    "loadingRecords": "Loading...",
+                    "processing": "Processing...",
+                    "zeroRecords": "No matching records found",
+                    "paginate": {
+                        "first": "First",
+                        "last": "Last",
+                        "next": "Next",
+                        "previous": "Previous"
+                    },
+                    "aria": {
+                        "sortAscending": ": activate to sort column ascending",
+                        "sortDescending": ": activate to sort column descending"
+                    }
+                },
+                "scrollX": false,
+                "autoWidth": false,
+
+            });
+
+            $(document).on("click", ".open-delete-dialog", function() {
+                var guid = $(this).data('guid');
+                $("#delete-id").val(guid);
+            });
+
+            $('#delete-form').on('submit', function(e) {
+                e.preventDefault();
+
+                var guid = $('#delete-id').val();
+
+                $.ajax({
+                    type: "DELETE",
+                    url: "{{ env('URL_API') }}/api/v1/question/" + guid,
+                    data: {
+
+                    },
+                    beforeSend: function(request) {
+                        request.setRequestHeader("Authorization",
+                            "Bearer {{ $token }}");
+
+                    },
+                    success: function(result) {
+                        window.location.href = "{{ route('soal') }}";
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        alert('Terjadi kesalahan: ' + errorMessage);
+                    }
                 });
-                $('#save-btn').on('click', function() {
-                    var table = $('#table-data').DataTable();
-                    var tableData = table.rows().data(); // Mengambil semua data dari tabel
-                    var numRows = tableData.length;
-                    var successCount = 0;
-                    var errorCount = 0;
+            });
 
-                    tableData.each(function(rowData) {
-                        var rowDataToSend = {
-                            pertanyaan: rowData.pertanyaan,
-                            jawaban: rowData.jawaban,
-                            kategori: rowData.kategori
-                        };
+            $(document).on("click", ".open-edit-dialog", function() {
+                var guid = $(this).data('guid');
+                $('#guid').val(guid);
 
-                        $.ajax({
-                            type: "POST",
-                            url: "{{ env('URL_API') }}/api/v1/question/save",
-                            data: JSON.stringify(rowDataToSend),
-                            beforeSend: function(request) {
-                                request.setRequestHeader("Authorization",
-                                    "Bearer {{ $token }}");
-                            },
-                            success: function(response) {
-                                console.log(response);
-                                successCount++;
-                                if (successCount + errorCount === numRows) {
-                                    alert("Data berhasil disimpan!");
-                                    window.location =
-                                        "/soal";
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error(xhr.responseText);
-                                errorCount++;
-                                if (successCount + errorCount === numRows) {
-                                    alert(
-                                        "Terjadi kesalahan saat menyimpan data."
-                                    );
-                                }
-                            }
 
-                        });
-                    });
+                $.ajax({
+                    type: "GET",
+                    url: "{{ env('URL_API') }}/api/v1/question/" + guid,
+                    data: {
+
+                    },
+                    beforeSend: function(request) {
+                        request.setRequestHeader("Authorization", "Bearer {{ $token }}");
+                    },
+                    success: function(result) {
+                        $('#edit-question').val(result['data']['pertanyaan']);
+                        $('#edit-answer').val(result['data']['jawaban']);
+                        $('#edit-category').val(result['data']['kategori']);
+                        $('#modalEdit').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        alert('Terjadi kesalahan: ' + errorMessage);
+                    }
                 });
 
-                // $.ajax({
-                //     url: "{{ env('URL_API') }}/api/v1/question/save",
-                //     type: "POST",
-                //     contentType: 'application/json',
-                //     headers: {
-                //         "Authorization": "Bearer {{ $token }}"
-                //     },
-                //     data: JSON.stringify(dataToSend),
-                //     success: function(response) {
-                //         console.log(response);
-                //         alert("Data berhasil disimpan!");
-                //     },
-                //     error: function(xhr, status, error) {
-                //         console.error(xhr.responseText);
-                //         alert("Terjadi kesalahan saat menyimpan data.");
-                //     }
-                // });
+            });
 
+            $('#edit-form').on('submit', function(e) {
+                e.preventDefault();
 
+                var guid = $('#guid').val();
+                var question = $('#edit-question').val();
+                var answer = $('#edit-answer').val();
+                var category = $('#edit-category').val();
+
+                $.ajax({
+                    type: "PUT",
+                    url: "{{ env('URL_API') }}/api/v1/question",
+                    data: {
+                        "guid": guid,
+                        "pertanyaan": question,
+                        "jawaban": answer,
+                        "kategori": category,
+                    },
+                    beforeSend: function(request) {
+                        request.setRequestHeader("Authorization", "Bearer {{ $token }}");
+                    },
+                    success: function(result) {
+                        $('#modalEdit').modal('hide');
+                        window.location.href = "{{ route('soal') }}";
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        alert('Terjadi kesalahan: ' + errorMessage);
+                    }
+                });
+            });
+            $('#add').click(function() {
+                $('#modalAdd').modal('show');
+            });
+
+            $('#add-form').on('submit', function(e) {
+                e.preventDefault();
+
+                var question = $('#add-question').val();
+                var answer = $('#add-answer').val();
+                var category = $('#add-category').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ env('URL_API') }}/api/v1/question",
+                    data: {
+                        pertanyaan: question,
+                        jawaban: answer,
+                        kategori: category
+                    },
+                    beforeSend: function(request) {
+                        request.setRequestHeader("Authorization",
+                            "Bearer {{ $token }}");
+                    },
+                    success: function(result) {
+                        $('#modalAdd').modal('hide');
+                        window.location.href = "{{ route('soal') }}";
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        alert('Terjadi kesalahan: ' + errorMessage);
+                    }
+                });
             });
 
 
 
         });
-    </script> --}}
+    </script>
 @endsection

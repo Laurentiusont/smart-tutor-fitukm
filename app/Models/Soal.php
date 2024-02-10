@@ -32,7 +32,7 @@ class Soal extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'pertanyaan', 'jawaban',  'kategori'
+        'pertanyaan', 'jawaban',  'kategori', 'materi_guid'
     ];
 
     /**
@@ -55,4 +55,11 @@ class Soal extends Model
         'updated_at' => 'datetime',
         // 'status' => StatusEnum::class
     ];
+    /**
+     * MATERI OBJECT
+     */
+    public function materi()
+    {
+        return $this->belongsTo(Materi::class);
+    }
 }

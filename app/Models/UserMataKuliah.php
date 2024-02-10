@@ -4,27 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Uuid;
 
-class Materi extends Model
+class UserMataKuliah extends Model
 {
-    use HasFactory, Uuid;
-
-    protected $table = 'materi';
+    use HasFactory;
+    protected $table = 'user_mata_kuliah';
 
     /**
      * The primary key associated with the table.
      *
      * @var string
      */
-    protected $primaryKey = 'guid';
+    protected $primaryKey = 'id';
 
-    /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -32,7 +24,7 @@ class Materi extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama', 'deskripsi', 'mata_kuliah_kode'
+        'users_id', 'mata_kuliah_kode'
     ];
 
     /**
@@ -55,18 +47,4 @@ class Materi extends Model
         'updated_at' => 'datetime',
         // 'status' => StatusEnum::class
     ];
-    /**
-     * SOAL OBJECT
-     */
-    public function soal()
-    {
-        return $this->hasMany(Soal::class);
-    }
-    /**
-     * MATA KULIAH OBJECT
-     */
-    public function mata_kuliah()
-    {
-        return $this->belongsTo(MataKuliah::class);
-    }
 }

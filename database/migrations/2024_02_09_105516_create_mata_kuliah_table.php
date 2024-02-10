@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('mata_kuliah', function (Blueprint $table) {
             $table->char('kode', 10)->primary();
-            $table->string('deskripsi');
+            $table->char('nama', 100);
+            $table->string('deskripsi')->nullable();
             $table->char('kelas', 3);
             $table->timestamps();
         });

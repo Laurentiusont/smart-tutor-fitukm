@@ -55,12 +55,4 @@ class Role extends Model
         'updated_at' => 'datetime',
         // 'status' => StatusEnum::class
     ];
-
-    /**
-     * USER OBJECT
-     */
-    public function user()
-    {
-        return $this->belongsToMany(User::class);
-    }
 }

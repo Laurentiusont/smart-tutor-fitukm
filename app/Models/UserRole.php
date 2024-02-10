@@ -5,23 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class JawabanMahasiswa extends Model
+class UserRole extends Model
 {
     use HasFactory;
+    protected $table = 'user_role';
 
-    protected $primaryKey = 'jawaban_id';
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
+
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-
     protected $fillable = [
-        'jawaban_id',
-        'jawaban',
-        'soal_id',
-        'user_id',
+        'users_id', 'role_guid'
     ];
 
     /**
@@ -31,7 +34,7 @@ class JawabanMahasiswa extends Model
      */
     protected $hidden = [
         'created_at',
-        'updated_at',
+        'updated_at'
     ];
 
     /**
@@ -42,5 +45,6 @@ class JawabanMahasiswa extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        // 'status' => StatusEnum::class
     ];
 }
