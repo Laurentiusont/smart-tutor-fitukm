@@ -244,6 +244,8 @@ class Snapshot
                         continue;
                     }
 
+                    $property->setAccessible(true);
+
                     if (!$property->isInitialized()) {
                         continue;
                     }

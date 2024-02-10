@@ -95,13 +95,7 @@ class Sudo
     public static function assignStaticProperty($class, string $property, $value)
     {
         $prop = self::getProperty(new \ReflectionClass($class), $property);
-        $refl = $prop->getDeclaringClass();
-
-        if (\version_compare(\PHP_VERSION, '7.4', '>=') && \method_exists($refl, 'setStaticPropertyValue')) {
-            $refl->setStaticPropertyValue($property, $value);
-        } else {
-            $prop->setValue($value);
-        }
+        $prop->setValue($value);
 
         return $value;
     }

@@ -31,7 +31,6 @@ final class Groups
 {
     /**
      * @psalm-param class-string $className
-     * @psalm-param non-empty-string $methodName
      *
      * @psalm-return list<string>
      */
@@ -90,7 +89,6 @@ final class Groups
 
     /**
      * @psalm-param class-string $className
-     * @psalm-param non-empty-string $methodName
      */
     public function size(string $className, string $methodName): TestSize
     {

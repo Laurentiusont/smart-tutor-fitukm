@@ -33,19 +33,17 @@ if ($composerAutoload) {
 
 function __phpunit_run_isolated_test()
 {
-    $dispatcher = Facade::instance()->initForIsolation(
+    $dispatcher = Facade::initForIsolation(
         PHPUnit\Event\Telemetry\HRTime::fromSecondsAndNanoseconds(
             {offsetSeconds},
             {offsetNanoseconds}
-        ),
-        {exportObjects},
+        )
     );
 
     require_once '{filename}';
 
     if ({collectCodeCoverageInformation}) {
-        CodeCoverage::instance()->init(ConfigurationRegistry::get(), CodeCoverageFilterRegistry::instance(), true);
-        CodeCoverage::instance()->ignoreLines({linesToBeIgnored});
+        CodeCoverage::instance()->init(ConfigurationRegistry::get(), CodeCoverageFilterRegistry::instance());
     }
 
     $test = new {className}('{methodName}');
@@ -60,7 +58,7 @@ function __phpunit_run_isolated_test()
 
     $output = '';
 
-    if (!$test->expectsOutput()) {
+    if (!$test->hasExpectationOnOutput()) {
         $output = $test->output();
     }
 
@@ -79,18 +77,15 @@ function __phpunit_run_isolated_test()
         }
     }
 
-    file_put_contents(
-        '{processResultFile}',
-        serialize(
-            [
-                'testResult'    => $test->result(),
-                'codeCoverage'  => {collectCodeCoverageInformation} ? CodeCoverage::instance()->codeCoverage() : null,
-                'numAssertions' => $test->numberOfAssertionsPerformed(),
-                'output'        => $output,
-                'events'        => $dispatcher->flush(),
-                'passedTests'   => PassedTests::instance()
-            ]
-        )
+    print serialize(
+        [
+            'testResult'    => $test->result(),
+            'codeCoverage'  => {collectCodeCoverageInformation} ? CodeCoverage::instance()->codeCoverage() : null,
+            'numAssertions' => $test->numberOfAssertionsPerformed(),
+            'output'        => $output,
+            'events'        => $dispatcher->flush(),
+            'passedTests'   => PassedTests::instance()
+        ]
     );
 }
 

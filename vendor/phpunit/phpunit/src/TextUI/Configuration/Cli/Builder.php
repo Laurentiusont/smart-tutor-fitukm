@@ -10,10 +10,7 @@
 namespace PHPUnit\TextUI\CliArguments;
 
 use function array_map;
-use function basename;
 use function explode;
-use function getcwd;
-use function is_file;
 use function is_numeric;
 use function sprintf;
 use PHPUnit\Runner\TestSuiteSorter;
@@ -58,9 +55,6 @@ final class Builder
         'enforce-time-limit',
         'exclude-group=',
         'filter=',
-        'generate-baseline=',
-        'use-baseline=',
-        'ignore-baseline',
         'generate-configuration',
         'globals-backup',
         'group=',
@@ -93,22 +87,18 @@ final class Builder
         'reverse-list',
         'static-backup',
         'stderr',
-        'fail-on-deprecation',
+        'stop-on-defect',
+        'stop-on-error',
+        'stop-on-failure',
+        'stop-on-warning',
+        'stop-on-incomplete',
+        'stop-on-risky',
+        'stop-on-skipped',
         'fail-on-empty-test-suite',
         'fail-on-incomplete',
-        'fail-on-notice',
         'fail-on-risky',
         'fail-on-skipped',
         'fail-on-warning',
-        'stop-on-defect',
-        'stop-on-deprecation',
-        'stop-on-error',
-        'stop-on-failure',
-        'stop-on-incomplete',
-        'stop-on-notice',
-        'stop-on-risky',
-        'stop-on-skipped',
-        'stop-on-warning',
         'strict-coverage',
         'disable-coverage-ignore',
         'strict-global-state',
@@ -123,7 +113,8 @@ final class Builder
         'log-events-verbose-text=',
         'version',
     ];
-    private const SHORT_OPTIONS = 'd:c:h';
+
+    private const SHORT_OPTIONS = 'd:c:hv';
 
     /**
      * @throws Exception
@@ -134,16 +125,17 @@ final class Builder
             $options = (new CliParser)->parse(
                 $parameters,
                 self::SHORT_OPTIONS,
-                self::LONG_OPTIONS,
+                self::LONG_OPTIONS
             );
         } catch (CliParserException $e) {
             throw new Exception(
                 $e->getMessage(),
                 $e->getCode(),
-                $e,
+                $e
             );
         }
 
+        $argument                          = null;
         $atLeastVersion                    = null;
         $backupGlobals                     = null;
         $backupStaticProperties            = null;
@@ -182,26 +174,12 @@ final class Builder
         $excludeGroups                     = null;
         $executionOrder                    = null;
         $executionOrderDefects             = null;
-        $failOnDeprecation                 = null;
         $failOnEmptyTestSuite              = null;
         $failOnIncomplete                  = null;
-        $failOnNotice                      = null;
         $failOnRisky                       = null;
         $failOnSkipped                     = null;
         $failOnWarning                     = null;
-        $stopOnDefect                      = null;
-        $stopOnDeprecation                 = null;
-        $stopOnError                       = null;
-        $stopOnFailure                     = null;
-        $stopOnIncomplete                  = null;
-        $stopOnNotice                      = null;
-        $stopOnRisky                       = null;
-        $stopOnSkipped                     = null;
-        $stopOnWarning                     = null;
         $filter                            = null;
-        $generateBaseline                  = null;
-        $useBaseline                       = null;
-        $ignoreBaseline                    = false;
         $generateConfiguration             = false;
         $migrateConfiguration              = false;
         $groups                            = null;
@@ -228,6 +206,13 @@ final class Builder
         $reverseList                       = null;
         $stderr                            = null;
         $strictCoverage                    = null;
+        $stopOnDefect                      = null;
+        $stopOnError                       = null;
+        $stopOnFailure                     = null;
+        $stopOnIncomplete                  = null;
+        $stopOnRisky                       = null;
+        $stopOnSkipped                     = null;
+        $stopOnWarning                     = null;
         $teamcityLogfile                   = null;
         $testdoxHtmlFile                   = null;
         $testdoxTextFile                   = null;
@@ -240,6 +225,10 @@ final class Builder
         $logEventsVerboseText              = null;
         $printerTeamCity                   = null;
         $printerTestDox                    = null;
+
+        if (isset($options[1][0])) {
+            $argument = $options[1][0];
+        }
 
         foreach ($options[0] as $option) {
             switch ($option[0]) {
@@ -378,29 +367,6 @@ final class Builder
 
                     break;
 
-                case '--generate-baseline':
-                    $generateBaseline = $option[1];
-
-                    if (basename($generateBaseline) === $generateBaseline) {
-                        $generateBaseline = getcwd() . DIRECTORY_SEPARATOR . $generateBaseline;
-                    }
-
-                    break;
-
-                case '--use-baseline':
-                    $useBaseline = $option[1];
-
-                    if (!is_file($useBaseline) && basename($useBaseline) === $useBaseline) {
-                        $useBaseline = getcwd() . DIRECTORY_SEPARATOR . $useBaseline;
-                    }
-
-                    break;
-
-                case '--ignore-baseline':
-                    $ignoreBaseline = true;
-
-                    break;
-
                 case '--generate-configuration':
                     $generateConfiguration = true;
 
@@ -520,8 +486,8 @@ final class Builder
                                 throw new Exception(
                                     sprintf(
                                         'unrecognized --order-by option: %s',
-                                        $order,
-                                    ),
+                                        $order
+                                    )
                                 );
                         }
                     }
@@ -538,8 +504,38 @@ final class Builder
 
                     break;
 
-                case '--fail-on-deprecation':
-                    $failOnDeprecation = true;
+                case '--stop-on-defect':
+                    $stopOnDefect = true;
+
+                    break;
+
+                case '--stop-on-error':
+                    $stopOnError = true;
+
+                    break;
+
+                case '--stop-on-failure':
+                    $stopOnFailure = true;
+
+                    break;
+
+                case '--stop-on-warning':
+                    $stopOnWarning = true;
+
+                    break;
+
+                case '--stop-on-incomplete':
+                    $stopOnIncomplete = true;
+
+                    break;
+
+                case '--stop-on-risky':
+                    $stopOnRisky = true;
+
+                    break;
+
+                case '--stop-on-skipped':
+                    $stopOnSkipped = true;
 
                     break;
 
@@ -550,11 +546,6 @@ final class Builder
 
                 case '--fail-on-incomplete':
                     $failOnIncomplete = true;
-
-                    break;
-
-                case '--fail-on-notice':
-                    $failOnNotice = true;
 
                     break;
 
@@ -570,51 +561,6 @@ final class Builder
 
                 case '--fail-on-warning':
                     $failOnWarning = true;
-
-                    break;
-
-                case '--stop-on-defect':
-                    $stopOnDefect = true;
-
-                    break;
-
-                case '--stop-on-deprecation':
-                    $stopOnDeprecation = true;
-
-                    break;
-
-                case '--stop-on-error':
-                    $stopOnError = true;
-
-                    break;
-
-                case '--stop-on-failure':
-                    $stopOnFailure = true;
-
-                    break;
-
-                case '--stop-on-incomplete':
-                    $stopOnIncomplete = true;
-
-                    break;
-
-                case '--stop-on-notice':
-                    $stopOnNotice = true;
-
-                    break;
-
-                case '--stop-on-risky':
-                    $stopOnRisky = true;
-
-                    break;
-
-                case '--stop-on-skipped':
-                    $stopOnSkipped = true;
-
-                    break;
-
-                case '--stop-on-warning':
-                    $stopOnWarning = true;
 
                     break;
 
@@ -823,7 +769,7 @@ final class Builder
         }
 
         return new Configuration(
-            $options[1],
+            $argument,
             $atLeastVersion,
             $backupGlobals,
             $backupStaticProperties,
@@ -855,26 +801,12 @@ final class Builder
             $excludeGroups,
             $executionOrder,
             $executionOrderDefects,
-            $failOnDeprecation,
             $failOnEmptyTestSuite,
             $failOnIncomplete,
-            $failOnNotice,
             $failOnRisky,
             $failOnSkipped,
             $failOnWarning,
-            $stopOnDefect,
-            $stopOnDeprecation,
-            $stopOnError,
-            $stopOnFailure,
-            $stopOnIncomplete,
-            $stopOnNotice,
-            $stopOnRisky,
-            $stopOnSkipped,
-            $stopOnWarning,
             $filter,
-            $generateBaseline,
-            $useBaseline,
-            $ignoreBaseline,
             $generateConfiguration,
             $migrateConfiguration,
             $groups,
@@ -901,6 +833,13 @@ final class Builder
             $reverseList,
             $stderr,
             $strictCoverage,
+            $stopOnDefect,
+            $stopOnError,
+            $stopOnFailure,
+            $stopOnIncomplete,
+            $stopOnRisky,
+            $stopOnSkipped,
+            $stopOnWarning,
             $teamcityLogfile,
             $testdoxHtmlFile,
             $testdoxTextFile,
@@ -919,7 +858,7 @@ final class Builder
             $logEventsText,
             $logEventsVerboseText,
             $printerTeamCity,
-            $printerTestDox,
+            $printerTestDox
         );
     }
 }

@@ -18,10 +18,8 @@ use function floor;
 use function json_encode;
 use function sprintf;
 use function str_replace;
-use SebastianBergmann\CodeCoverage\FileCouldNotBeWrittenException;
 use SebastianBergmann\CodeCoverage\Node\AbstractNode;
 use SebastianBergmann\CodeCoverage\Node\Directory as DirectoryNode;
-use SebastianBergmann\Template\Exception;
 use SebastianBergmann\Template\Template;
 
 /**
@@ -60,15 +58,7 @@ final class Dashboard extends Renderer
             ]
         );
 
-        try {
-            $template->renderTo($file);
-        } catch (Exception $e) {
-            throw new FileCouldNotBeWrittenException(
-                $e->getMessage(),
-                $e->getCode(),
-                $e
-            );
-        }
+        $template->renderTo($file);
     }
 
     protected function activeBreadcrumb(AbstractNode $node): string

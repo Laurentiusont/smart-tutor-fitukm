@@ -656,30 +656,6 @@ class Vite implements Htmlable
     }
 
     /**
-     * Get the content of a given asset.
-     *
-     * @param  string  $asset
-     * @param  string|null  $buildDirectory
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public function content($asset, $buildDirectory = null)
-    {
-        $buildDirectory ??= $this->buildDirectory;
-
-        $chunk = $this->chunk($this->manifest($buildDirectory), $asset);
-
-        $path = public_path($buildDirectory.'/'.$chunk['file']);
-
-        if (! is_file($path) || ! file_exists($path)) {
-            throw new Exception("Unable to locate file from Vite manifest: {$path}.");
-        }
-
-        return file_get_contents($path);
-    }
-
-    /**
      * Generate an asset path for the application.
      *
      * @param  string  $path
@@ -697,7 +673,7 @@ class Vite implements Htmlable
      * @param  string  $buildDirectory
      * @return array
      *
-     * @throws \Illuminate\Foundation\ViteManifestNotFoundException
+     * @throws \Exception
      */
     protected function manifest($buildDirectory)
     {
@@ -705,7 +681,7 @@ class Vite implements Htmlable
 
         if (! isset(static::$manifests[$path])) {
             if (! is_file($path)) {
-                throw new ViteManifestNotFoundException("Vite manifest not found at: $path");
+                throw new Exception("Vite manifest not found at: {$path}");
             }
 
             static::$manifests[$path] = json_decode(file_get_contents($path), true);

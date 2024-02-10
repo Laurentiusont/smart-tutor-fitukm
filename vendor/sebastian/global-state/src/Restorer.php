@@ -53,7 +53,8 @@ final class Restorer
         foreach ($snapshot->staticProperties() as $className => $staticProperties) {
             foreach ($staticProperties as $name => $value) {
                 $reflector = new ReflectionProperty($className, $name);
-                $reflector->setValue(null, $value);
+                $reflector->setAccessible(true);
+                $reflector->setValue($value);
             }
         }
 
@@ -76,7 +77,8 @@ final class Restorer
                     continue;
                 }
 
-                $property->setValue(null, $defaults[$name]);
+                $property->setAccessible(true);
+                $property->setValue($defaults[$name]);
             }
         }
     }

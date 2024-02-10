@@ -6,7 +6,6 @@ namespace NunoMaduro\Collision\Adapters\Phpunit;
 
 use Closure;
 use NunoMaduro\Collision\Adapters\Phpunit\Printers\DefaultPrinter;
-use NunoMaduro\Collision\Adapters\Phpunit\Support\ResultReflection;
 use NunoMaduro\Collision\Exceptions\ShouldNotHappen;
 use NunoMaduro\Collision\Exceptions\TestException;
 use NunoMaduro\Collision\Exceptions\TestOutcome;
@@ -23,13 +22,12 @@ use ReflectionClass;
 use ReflectionFunction;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Termwind\Terminal;
-use Whoops\Exception\Frame;
-use Whoops\Exception\Inspector;
-
 use function Termwind\render;
 use function Termwind\renderUsing;
+use Termwind\Terminal;
 use function Termwind\terminal;
+use Whoops\Exception\Frame;
+use Whoops\Exception\Inspector;
 
 /**
  * @internal
@@ -242,7 +240,7 @@ final class Style
             }
         }
 
-        $pending = ResultReflection::numberOfTests($result) - $result->numberOfTestsRun();
+        $pending = $result->numberOfTests() - $result->numberOfTestsRun();
         if ($pending > 0) {
             $tests[] = "\e[2m$pending pending\e[22m";
         }
@@ -283,6 +281,9 @@ final class Style
         foreach ($slowTests as $testResult) {
             $seconds = number_format($testResult->duration / 1000, 2, '.', '');
 
+            // If duration is more than 25% of the total time elapsed, set the color as red
+            // If duration is more than 10% of the total time elapsed, set the color as yellow
+            // Otherwise, set the color as default
             $color = ($testResult->duration / 1000) > $timeElapsed * 0.25 ? 'red' : ($testResult->duration > $timeElapsed * 0.1 ? 'yellow' : 'gray');
 
             renderUsing($this->output);
@@ -344,9 +345,8 @@ final class Style
             '/vendor\/phpunit\/phpunit\/src/',
             '/vendor\/mockery\/mockery/',
             '/vendor\/laravel\/dusk/',
-            '/Illuminate\/Testing/',
-            '/Illuminate\/Foundation\/Testing/',
-            '/Illuminate\/Foundation\/Bootstrap\/HandleExceptions/',
+            '/vendor\/laravel\/framework\/src\/Illuminate\/Testing/',
+            '/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Testing/',
             '/vendor\/symfony\/framework-bundle\/Test/',
             '/vendor\/symfony\/phpunit-bridge/',
             '/vendor\/symfony\/dom-crawler/',
@@ -439,6 +439,7 @@ final class Style
             $seconds = $seconds !== '0.00' ? sprintf('<span class="text-gray mr-2">%ss</span>', $seconds) : '';
         }
 
+        // Pest specific
         if (isset($_SERVER['REBUILD_SNAPSHOTS']) || (isset($_SERVER['COLLISION_IGNORE_DURATION']) && $_SERVER['COLLISION_IGNORE_DURATION'] === 'true')) {
             $seconds = '';
         }
@@ -447,10 +448,6 @@ final class Style
 
         if ($warning !== '') {
             $warning = sprintf('<span class="ml-1 text-yellow">%s</span>', $warning);
-
-            if (! empty($result->warningSource)) {
-                $warning .= ' // '.$result->warningSource;
-            }
         }
 
         $description = preg_replace('/`([^`]+)`/', '<span class="text-white">$1</span>', $result->description);

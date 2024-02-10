@@ -118,7 +118,7 @@ class DatabaseQueue extends Queue implements QueueContract, ClearableQueue
      * @param  string  $job
      * @param  mixed  $data
      * @param  string|null  $queue
-     * @return mixed
+     * @return void
      */
     public function later($delay, $job, $data = '', $queue = null)
     {

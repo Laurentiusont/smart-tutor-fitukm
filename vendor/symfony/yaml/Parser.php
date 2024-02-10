@@ -99,7 +99,7 @@ class Parser
         return $data;
     }
 
-    private function doParse(string $value, int $flags): mixed
+    private function doParse(string $value, int $flags)
     {
         $this->currentLineNb = -1;
         $this->currentLine = '';
@@ -182,8 +182,9 @@ class Parser
                             || self::preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|[^ \'"\{\[].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $this->trimTag($values['value']), $matches)
                         )
                     ) {
+                        // this is a compact notation element, add to next block and parse
                         $block = $values['value'];
-                        if ($this->isNextLineIndented() || isset($matches['value']) && '>-' === $matches['value']) {
+                        if ($this->isNextLineIndented()) {
                             $block .= "\n".$this->getNextEmbedBlock($this->getCurrentLineIndentation() + \strlen($values['leadspaces']) + 1);
                         }
 
@@ -502,7 +503,7 @@ class Parser
         return empty($data) ? null : $data;
     }
 
-    private function parseBlock(int $offset, string $yaml, int $flags): mixed
+    private function parseBlock(int $offset, string $yaml, int $flags)
     {
         $skippedLineNumbers = $this->skippedLineNumbers;
 
@@ -843,8 +844,8 @@ class Parser
 
             while (
                 $notEOF && (
-                    $isCurrentLineBlank
-                    || self::preg_match($pattern, $this->currentLine, $matches)
+                    $isCurrentLineBlank ||
+                    self::preg_match($pattern, $this->currentLine, $matches)
                 )
             ) {
                 if ($isCurrentLineBlank && \strlen($this->currentLine) > $indentation) {
@@ -931,10 +932,6 @@ class Parser
         } while (!$EOF && ($this->isCurrentLineEmpty() || $this->isCurrentLineComment()));
 
         if ($EOF) {
-            for ($i = 0; $i < $movements; ++$i) {
-                $this->moveToPreviousLine();
-            }
-
             return false;
         }
 

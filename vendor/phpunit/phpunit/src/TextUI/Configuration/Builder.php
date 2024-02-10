@@ -18,8 +18,6 @@ use PHPUnit\TextUI\XmlConfiguration\Loader;
 
 /**
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
- *
- * @codeCoverageIgnore
  */
 final class Builder
 {
@@ -39,13 +37,13 @@ final class Builder
 
             return Registry::init(
                 $cliConfiguration,
-                $xmlConfiguration,
+                $xmlConfiguration
             );
         } catch (CliConfigurationException|XmlConfigurationException $e) {
             throw new ConfigurationCannotBeBuiltException(
                 $e->getMessage(),
                 $e->getCode(),
-                $e,
+                $e
             );
         }
     }

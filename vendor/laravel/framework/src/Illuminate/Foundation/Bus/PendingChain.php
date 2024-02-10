@@ -5,13 +5,10 @@ namespace Illuminate\Foundation\Bus;
 use Closure;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Queue\CallQueuedClosure;
-use Illuminate\Support\Traits\Conditionable;
 use Laravel\SerializableClosure\SerializableClosure;
 
 class PendingChain
 {
-    use Conditionable;
-
     /**
      * The class name of the job being dispatched.
      *

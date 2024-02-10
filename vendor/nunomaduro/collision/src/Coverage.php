@@ -9,7 +9,6 @@ use SebastianBergmann\CodeCoverage\Node\Directory;
 use SebastianBergmann\CodeCoverage\Node\File;
 use SebastianBergmann\Environment\Runtime;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use function Termwind\render;
 use function Termwind\renderUsing;
 use function Termwind\terminal;
@@ -46,7 +45,7 @@ final class Coverage
             return true;
         }
 
-        if (self::usingXdebug()) {
+        if (static::usingXdebug()) {
             $mode = getenv('XDEBUG_MODE') ?: ini_get('xdebug.mode');
 
             return $mode && in_array('coverage', explode(',', $mode), true);
@@ -110,15 +109,6 @@ final class Coverage
                 ? '100.0'
                 : number_format($file->percentageOfExecutedLines()->asFloat(), 1, '.', '');
 
-            $uncoveredLines = '';
-
-            $percentageOfExecutedLinesAsString = $file->percentageOfExecutedLines()->asString();
-
-            if (! in_array($percentageOfExecutedLinesAsString, ['0.00%', '100.00%', '100.0%', ''], true)) {
-                $uncoveredLines = trim(implode(', ', self::getMissingCoverage($file)));
-                $uncoveredLines = sprintf('<span>%s</span>', $uncoveredLines).' <span class="text-gray"> / </span>';
-            }
-
             $color = $percentage === '100.0' ? 'green' : ($percentage === '0.0' ? 'red' : 'yellow');
 
             $truncateAt = max(1, terminal()->width() - 12);
@@ -128,7 +118,7 @@ final class Coverage
                 <div class="flex mx-2">
                     <span class="truncate-{$truncateAt}">{$name}</span>
                     <span class="flex-1 content-repeat-[.] text-gray mx-1"></span>
-                    <span class="text-{$color}">$uncoveredLines {$percentage}%</span>
+                    <span class="text-{$color}">{$percentage}%</span>
                 </div>
             HTML);
         }

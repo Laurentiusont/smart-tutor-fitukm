@@ -7,7 +7,6 @@ use Carbon\CarbonPeriod;
 use Closure;
 use DateTimeInterface;
 use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
-use Illuminate\Contracts\Database\Query\ConditionExpression;
 use Illuminate\Contracts\Database\Query\Expression as ExpressionContract;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Concerns\BuildsQueries;
@@ -512,7 +511,7 @@ class Builder implements BuilderContract
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
      * @param  \Closure|string  $first
      * @param  string|null  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string|null  $second
+     * @param  string|null  $second
      * @param  string  $type
      * @param  bool  $where
      * @return $this
@@ -552,7 +551,7 @@ class Builder implements BuilderContract
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
      * @param  \Closure|string  $first
      * @param  string  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $second
+     * @param  string  $second
      * @param  string  $type
      * @return $this
      */
@@ -568,7 +567,7 @@ class Builder implements BuilderContract
      * @param  string  $as
      * @param  \Closure|string  $first
      * @param  string|null  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string|null  $second
+     * @param  string|null  $second
      * @param  string  $type
      * @param  bool  $where
      * @return $this
@@ -592,7 +591,7 @@ class Builder implements BuilderContract
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
      * @param  \Closure|string  $first
      * @param  string|null  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string|null  $second
+     * @param  string|null  $second
      * @return $this
      */
     public function leftJoin($table, $first, $operator = null, $second = null)
@@ -606,7 +605,7 @@ class Builder implements BuilderContract
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
      * @param  \Closure|string  $first
      * @param  string  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string|null  $second
+     * @param  string  $second
      * @return $this
      */
     public function leftJoinWhere($table, $first, $operator, $second)
@@ -621,7 +620,7 @@ class Builder implements BuilderContract
      * @param  string  $as
      * @param  \Closure|string  $first
      * @param  string|null  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string|null  $second
+     * @param  string|null  $second
      * @return $this
      */
     public function leftJoinSub($query, $as, $first, $operator = null, $second = null)
@@ -635,7 +634,7 @@ class Builder implements BuilderContract
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
      * @param  \Closure|string  $first
      * @param  string|null  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string|null  $second
+     * @param  string|null  $second
      * @return $this
      */
     public function rightJoin($table, $first, $operator = null, $second = null)
@@ -649,7 +648,7 @@ class Builder implements BuilderContract
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
      * @param  \Closure|string  $first
      * @param  string  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $second
+     * @param  string  $second
      * @return $this
      */
     public function rightJoinWhere($table, $first, $operator, $second)
@@ -664,7 +663,7 @@ class Builder implements BuilderContract
      * @param  string  $as
      * @param  \Closure|string  $first
      * @param  string|null  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string|null  $second
+     * @param  string|null  $second
      * @return $this
      */
     public function rightJoinSub($query, $as, $first, $operator = null, $second = null)
@@ -678,7 +677,7 @@ class Builder implements BuilderContract
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
      * @param  \Closure|string|null  $first
      * @param  string|null  $operator
-     * @param  \Illuminate\Contracts\Database\Query\Expression|string|null  $second
+     * @param  string|null  $second
      * @return $this
      */
     public function crossJoin($table, $first = null, $operator = null, $second = null)
@@ -754,14 +753,6 @@ class Builder implements BuilderContract
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
-        if ($column instanceof ConditionExpression) {
-            $type = 'Expression';
-
-            $this->wheres[] = compact('type', 'column', 'boolean');
-
-            return $this;
-        }
-
         // If the column is an array, we will assume it is an array of key-value pairs
         // and can add them each as a where clause. We will maintain the boolean we
         // received when the method was called and pass it into the nested where.
@@ -803,7 +794,7 @@ class Builder implements BuilderContract
         // If the value is a Closure, it means the developer is performing an entire
         // sub-select within the query and we will need to compile the sub-select
         // within the where clause to get the appropriate query record results.
-        if ($this->isQueryable($value)) {
+        if ($value instanceof Closure) {
             return $this->whereSub($column, $operator, $value, $boolean);
         }
 
@@ -1262,7 +1253,7 @@ class Builder implements BuilderContract
         $type = 'between';
 
         if ($values instanceof CarbonPeriod) {
-            $values = [$values->start, $values->end];
+            $values = $values->toArray();
         }
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean', 'not');
@@ -1658,22 +1649,18 @@ class Builder implements BuilderContract
      *
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
      * @param  string  $operator
-     * @param  \Closure||\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $callback
+     * @param  \Closure  $callback
      * @param  string  $boolean
      * @return $this
      */
-    protected function whereSub($column, $operator, $callback, $boolean)
+    protected function whereSub($column, $operator, Closure $callback, $boolean)
     {
         $type = 'Sub';
 
-        if ($callback instanceof Closure) {
-            // Once we have the query instance we can simply execute it so it can add all
-            // of the sub-select's conditions to itself, and then we can cache it off
-            // in the array of where clauses for the "main" parent query instance.
-            $callback($query = $this->forSubQuery());
-        } else {
-            $query = $callback instanceof EloquentBuilder ? $callback->toBase() : $callback;
-        }
+        // Once we have the query instance we can simply execute it so it can add all
+        // of the sub-select's conditions to itself, and then we can cache it off
+        // in the array of where clauses for the "main" parent query instance.
+        $callback($query = $this->forSubQuery());
 
         $this->wheres[] = compact(
             'type', 'column', 'operator', 'query', 'boolean'
@@ -1702,7 +1689,7 @@ class Builder implements BuilderContract
             // compile the whole thing in the grammar and insert it into the SQL.
             $callback($query);
         } else {
-            $query = $callback instanceof EloquentBuilder ? $callback->toBase() : $callback;
+            $query = $callback;
         }
 
         return $this->addWhereExistsQuery($query, $boolean, $not);
@@ -2086,7 +2073,7 @@ class Builder implements BuilderContract
     /**
      * Add a "having" clause to the query.
      *
-     * @param  \Illuminate\Contracts\Database\Query\Expression|\Closure|string  $column
+     * @param  \Closure|string  $column
      * @param  string|int|float|null  $operator
      * @param  string|int|float|null  $value
      * @param  string  $boolean
@@ -2095,14 +2082,6 @@ class Builder implements BuilderContract
     public function having($column, $operator = null, $value = null, $boolean = 'and')
     {
         $type = 'Basic';
-
-        if ($column instanceof ConditionExpression) {
-            $type = 'Expression';
-
-            $this->havings[] = compact('type', 'column', 'boolean');
-
-            return $this;
-        }
 
         // Here we will make some assumptions about the operator. If only 2 values are
         // passed to the method, we will assume that the operator is an equals sign
@@ -2138,7 +2117,7 @@ class Builder implements BuilderContract
     /**
      * Add an "or having" clause to the query.
      *
-     * @param  \Illuminate\Contracts\Database\Query\Expression|\Closure|string  $column
+     * @param  \Closure|string  $column
      * @param  string|int|float|null  $operator
      * @param  string|int|float|null  $value
      * @return $this
@@ -2253,7 +2232,7 @@ class Builder implements BuilderContract
         $type = 'between';
 
         if ($values instanceof CarbonPeriod) {
-            $values = [$values->start, $values->end];
+            $values = $values->toArray();
         }
 
         $this->havings[] = compact('type', 'column', 'values', 'boolean', 'not');
@@ -2639,18 +2618,6 @@ class Builder implements BuilderContract
     }
 
     /**
-     * Get the raw SQL representation of the query with embedded bindings.
-     *
-     * @return string
-     */
-    public function toRawSql()
-    {
-        return $this->grammar->substituteBindingsIntoRawSql(
-            $this->toSql(), $this->connection->prepareBindings($this->getBindings())
-        );
-    }
-
-    /**
      * Execute a query for a single record by ID.
      *
      * @param  int|string  $id
@@ -2760,14 +2727,13 @@ class Builder implements BuilderContract
      * @param  array|string  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @param  \Closure|int|null  $total
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null)
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-        $total = func_num_args() === 5 ? value(func_get_arg(4)) : $this->getCountForPagination();
+        $total = $this->getCountForPagination();
 
         $perPage = $perPage instanceof Closure ? $perPage($total) : $perPage;
 
@@ -2826,30 +2792,17 @@ class Builder implements BuilderContract
      */
     protected function ensureOrderForCursorPagination($shouldReverse = false)
     {
-        if (empty($this->orders) && empty($this->unionOrders)) {
-            $this->enforceOrderBy();
-        }
+        $this->enforceOrderBy();
 
-        $reverseDirection = function ($order) {
-            if (! isset($order['direction'])) {
+        return collect($this->orders ?? $this->unionOrders ?? [])->filter(function ($order) {
+            return Arr::has($order, 'direction');
+        })->when($shouldReverse, function (Collection $orders) {
+            return $orders->map(function ($order) {
+                $order['direction'] = $order['direction'] === 'asc' ? 'desc' : 'asc';
+
                 return $order;
-            }
-
-            $order['direction'] = $order['direction'] === 'asc' ? 'desc' : 'asc';
-
-            return $order;
-        };
-
-        if ($shouldReverse) {
-            $this->orders = collect($this->orders)->map($reverseDirection)->toArray();
-            $this->unionOrders = collect($this->unionOrders)->map($reverseDirection)->toArray();
-        }
-
-        $orders = ! empty($this->unionOrders) ? $this->unionOrders : $this->orders;
-
-        return collect($orders)
-            ->filter(fn ($order) => Arr::has($order, 'direction'))
-            ->values();
+            });
+        })->values();
     }
 
     /**
@@ -3356,7 +3309,6 @@ class Builder implements BuilderContract
         } else {
             foreach ($values as $key => $value) {
                 ksort($value);
-
                 $values[$key] = $value;
             }
         }
@@ -3914,18 +3866,6 @@ class Builder implements BuilderContract
     }
 
     /**
-     * Dump the raw current SQL with embedded bindings.
-     *
-     * @return $this
-     */
-    public function dumpRawSql()
-    {
-        dump($this->toRawSql());
-
-        return $this;
-    }
-
-    /**
      * Die and dump the current SQL and bindings.
      *
      * @return never
@@ -3933,16 +3873,6 @@ class Builder implements BuilderContract
     public function dd()
     {
         dd($this->toSql(), $this->getBindings());
-    }
-
-    /**
-     * Die and dump the current SQL with embedded bindings.
-     *
-     * @return never
-     */
-    public function ddRawSql()
-    {
-        dd($this->toRawSql());
     }
 
     /**
@@ -3954,7 +3884,7 @@ class Builder implements BuilderContract
      *
      * @throws \BadMethodCallException
      */
-    public function __call($method, $parameters)
+    public function __call($method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);

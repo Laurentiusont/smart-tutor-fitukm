@@ -14,9 +14,7 @@ use function is_object;
 use function is_string;
 use function sprintf;
 use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Util\Exporter;
 use SebastianBergmann\Comparator\ComparisonFailure;
-use UnitEnum;
 
 /**
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
@@ -59,17 +57,17 @@ final class IsIdentical extends Constraint
                     $this->value,
                     $other,
                     sprintf("'%s'", $this->value),
-                    sprintf("'%s'", $other),
+                    sprintf("'%s'", $other)
                 );
             }
 
-            // if both values are array or enums, make sure a diff is generated
-            if ((is_array($this->value) && is_array($other)) || ($this->value instanceof UnitEnum && $other instanceof UnitEnum)) {
+            // if both values are array, make sure a diff is generated
+            if (is_array($this->value) && is_array($other)) {
                 $f = new ComparisonFailure(
                     $this->value,
                     $other,
-                    Exporter::export($this->value, true),
-                    Exporter::export($other, true),
+                    $this->exporter()->export($this->value),
+                    $this->exporter()->export($other)
                 );
             }
 
@@ -82,14 +80,14 @@ final class IsIdentical extends Constraint
     /**
      * Returns a string representation of the constraint.
      */
-    public function toString(bool $exportObjects = false): string
+    public function toString(): string
     {
         if (is_object($this->value)) {
             return 'is identical to an object of class "' .
                 $this->value::class . '"';
         }
 
-        return 'is identical to ' . Exporter::export($this->value, $exportObjects);
+        return 'is identical to ' . $this->exporter()->export($this->value);
     }
 
     /**

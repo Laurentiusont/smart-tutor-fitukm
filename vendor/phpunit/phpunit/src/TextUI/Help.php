@@ -27,9 +27,11 @@ use SebastianBergmann\Environment\Console;
 final class Help
 {
     private const LEFT_MARGIN = '  ';
-    private const HELP_TEXT   = [
+
+    private const HELP_TEXT = [
         'Usage' => [
-            ['text' => 'phpunit [options] <directory|file> ...'],
+            ['text' => 'phpunit [options] UnitTest.php'],
+            ['text' => 'phpunit [options] <directory>'],
         ],
 
         'Configuration' => [
@@ -42,9 +44,6 @@ final class Help
             ['arg' => '--cache-directory <dir>', 'desc' => 'Specify cache directory'],
             ['arg' => '--generate-configuration', 'desc' => 'Generate configuration file with suggested settings'],
             ['arg' => '--migrate-configuration', 'desc' => 'Migrate configuration file to current format'],
-            ['arg' => '--generate-baseline <file>', 'desc' => 'Generate baseline for issues'],
-            ['arg' => '--use-baseline <file>', 'desc' => 'Use baseline to ignore issues'],
-            ['arg' => '--ignore-baseline', 'desc' => 'Do not use baseline to ignore issues'],
         ],
 
         'Selection' => [
@@ -76,23 +75,19 @@ final class Help
             ['arg'    => '--dont-report-useless-tests', 'desc' => 'Do not report tests that do not test anything'],
             ['spacer' => ''],
 
-            ['arg'    => '--stop-on-defect', 'desc' => 'Stop after first error, failure, warning, or risky test'],
-            ['arg'    => '--stop-on-error', 'desc' => 'Stop after first error'],
-            ['arg'    => '--stop-on-failure', 'desc' => 'Stop after first failure'],
-            ['arg'    => '--stop-on-warning', 'desc' => 'Stop after first warning'],
-            ['arg'    => '--stop-on-risky', 'desc' => 'Stop after first risky test'],
-            ['arg'    => '--stop-on-deprecation', 'desc' => 'Stop after first test that triggered a deprecation'],
-            ['arg'    => '--stop-on-notice', 'desc' => 'Stop after first test that triggered a notice'],
-            ['arg'    => '--stop-on-skipped', 'desc' => 'Stop after first skipped test'],
-            ['arg'    => '--stop-on-incomplete', 'desc' => 'Stop after first incomplete test'],
+            ['arg'    => '--stop-on-defect', 'desc' => 'Stop execution upon first not-passed test'],
+            ['arg'    => '--stop-on-error', 'desc' => 'Stop execution upon first error'],
+            ['arg'    => '--stop-on-failure', 'desc' => 'Stop execution upon first error or failure'],
+            ['arg'    => '--stop-on-warning', 'desc' => 'Stop execution upon first warning'],
+            ['arg'    => '--stop-on-risky', 'desc' => 'Stop execution upon first risky test'],
+            ['arg'    => '--stop-on-skipped', 'desc' => 'Stop execution upon first skipped test'],
+            ['arg'    => '--stop-on-incomplete', 'desc' => 'Stop execution upon first incomplete test'],
             ['spacer' => ''],
 
-            ['arg'    => '--fail-on-warning', 'desc' => 'Signal failure using shell exit code when a warning was triggered'],
-            ['arg'    => '--fail-on-risky', 'desc' => 'Signal failure using shell exit code when a test was considered risky'],
-            ['arg'    => '--fail-on-deprecation', 'desc' => 'Signal failure using shell exit code when a deprecation was triggered'],
-            ['arg'    => '--fail-on-notice', 'desc' => 'Signal failure using shell exit code when a notice was triggered'],
-            ['arg'    => '--fail-on-skipped', 'desc' => 'Signal failure using shell exit code when a test was skipped'],
-            ['arg'    => '--fail-on-incomplete', 'desc' => 'Signal failure using shell exit code when a test was marked incomplete'],
+            ['arg'    => '--fail-on-incomplete', 'desc' => 'Treat incomplete tests as failures'],
+            ['arg'    => '--fail-on-risky', 'desc' => 'Treat risky tests as failures'],
+            ['arg'    => '--fail-on-skipped', 'desc' => 'Treat skipped tests as failures'],
+            ['arg'    => '--fail-on-warning', 'desc' => 'Treat tests with warnings as failures'],
             ['spacer' => ''],
 
             ['arg'    => '--cache-result', 'desc' => 'Write test results to cache file'],
@@ -134,7 +129,7 @@ final class Help
             ['arg' => '--testdox-html <file>', 'desc' => 'Write test results in TestDox format (HTML) to file'],
             ['arg' => '--testdox-text <file>', 'desc' => 'Write test results in TestDox format (plain text) to file'],
             ['arg' => '--log-events-text <file>', 'desc' => 'Stream events as plain text to file'],
-            ['arg' => '--log-events-verbose-text <file>', 'desc' => 'Stream events as plain text with extended information to file'],
+            ['arg' => '--log-events-verbose-text <file>', 'desc' => 'Stream events as plain text (with telemetry information) to file'],
             ['arg' => '--no-logging', 'desc' => 'Ignore logging configured in the XML configuration file'],
         ],
 
@@ -255,7 +250,7 @@ final class Help
                     $arg = preg_replace_callback(
                         '/(<[^>]+>)/',
                         static fn ($matches) => Color::colorize('fg-cyan', $matches[0]),
-                        $arg,
+                        $arg
                     );
 
                     $desc = explode(PHP_EOL, wordwrap($option['desc'], $this->columnsAvailableForDescription, PHP_EOL));

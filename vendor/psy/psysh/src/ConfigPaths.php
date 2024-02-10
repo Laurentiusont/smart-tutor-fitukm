@@ -34,8 +34,7 @@ class ConfigPaths
     public function __construct(array $overrides = [], EnvInterface $env = null)
     {
         $this->overrideDirs($overrides);
-
-        $this->env = $env ?: (\PHP_SAPI === 'cli-server' ? new SystemEnv() : new SuperglobalsEnv());
+        $this->env = $env ?: new SuperglobalsEnv();
     }
 
     /**
