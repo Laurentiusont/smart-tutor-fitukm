@@ -25,14 +25,15 @@
                     </a>
                 </li>
                 <li class="TextSidebar mt-2">
-                    <h6 class="textSidebar ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Data Master
+                    <h6 class="textSidebar ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
+                        Feature
                     </h6>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('question') ? 'active' : '' }}" href="{{ url('question') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-inventory.png') }}" width="14px" height="14px"
+                            <img src="{{ asset('assets/img/question.png') }}" width="14px" height="14px"
                                 viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink">
                             <title>shop </title>
@@ -40,7 +41,7 @@
                         <p class="m-1 textSidebar">Question</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link {{ Request::is('soal') ? 'active' : '' }}" href="{{ url('soal') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -51,78 +52,35 @@
                         </div>
                         <p class="m-1 textSidebar">Soal</p>
                     </a>
+                </li> --}}
+
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('course') ? 'active' : '' }} {{ Request::is('topic/*') ? 'active open' : '' }} {{ Request::is('question/*') ? 'active open' : '' }}"
+                        href="{{ url('course') }}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <img src="{{ asset('assets/img/learning.png') }}" width="14px" height="14px"
+                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <title>shop </title>
+                        </div>
+                        <p class="m-1 textSidebar">Course</p>
+                    </a>
                 </li>
 
                 {{-- <li class="nav-item">
-                    <a class="nav-link {{ Request::is('karyawan') ? 'active' : '' }}" href="{{ url('karyawan') }}">
+                    <a class="nav-link {{ Request::is('materi') ? 'active' : '' }}" href="{{ url('materi') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-datakaryawan.png') }}" width="13px" height="13px"
+                            <img src="{{ asset('assets/img/icon-inventory.png') }}" width="14px" height="14px"
                                 viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink">
                             <title>shop </title>
                         </div>
-                        <p class="m-1 textSidebar">Employee</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('kategori') ? 'active' : '' }}" href="{{ url('kategori') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-category.png') }}" width="14px" height="14px"
-                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>shop </title>
-                        </div>
-                        <p class="m-1 textSidebar">Category</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('ruangan') ? 'active' : '' }}" href="{{ url('ruangan') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-rooms.png') }}" width="14px" height="14px"
-                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>shop </title>
-                        </div>
-                        <p class="m-1 textSidebar">Room</p>
-                    </a>
-                </li>
-
-                <li class="TextSidebar mt-2">
-                    <h6 class="textSidebar ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Report
-                        History</h6>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('perbaikan') ? 'active' : '' }}" href="{{ url('perbaikan') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-repair.png') }}" width="12px" height="12px"
-                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>shop </title>
-                        </div>
-                        <p class="m-1 textSidebar">Repair History</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('historyPemakaian') ? 'active' : '' }}"
-                        href="{{ url('historyPemakaian') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-usage.png') }}" width="13px" height="13px"
-                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>shop </title>
-                        </div>
-                        <p class="m-1 textSidebar">Usage History</p>
+                        <p class="m-1 textSidebar">Materi</p>
                     </a>
                 </li> --}}
+
 
                 <li class="nav-item">
                     <a class="nav-link " role="button" id="logout">

@@ -53,12 +53,9 @@
             </div>
 
             <hr>
-
-            @if (Route::has('password.request'))
-                <p class="mb-0">
-                    <a href="">{{ __('Lupa Password?') }}</a>
-                </p>
-            @endif
+            <p class="mb-0">
+                <a href="{{ route('password.request') }}">{{ __('Forget Password?') }}</a>
+            </p>
             @if (Route::has('register'))
                 <p class="mb-0">
                     <a href="" class="text-center">{{ __('Belum punya akun? Daftar sekarang') }}</a>
@@ -84,7 +81,7 @@
                     type: "POST",
                     url: "{{ env('URL_API') }}/api/v1/auth/login",
                     data: {
-                        _token: "{{ csrf_token() }}",
+                        // _token: "{{ csrf_token() }}",
                         email: emailAddress,
                         password: loginPassword,
                     },
@@ -129,6 +126,9 @@
                                         ],
                                         name: result['data'][
                                             'name'
+                                        ],
+                                        id: result['data'][
+                                            'id'
                                         ],
                                     },
                                     success: function(result) {
