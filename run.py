@@ -4,7 +4,7 @@ import json
 
 # with open('/hidden.txt') as file:
 # openai.api_key = file.read()
-openai.api_key = "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"
+openai.api_key = "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"
 
 
 def get_api_response(prompt: str) -> str | None:
@@ -31,8 +31,8 @@ def get_api_response(prompt: str) -> str | None:
     except Exception as e:
         print('ERROR:', e)
 
-    return '{"pertanyaan":' + str(text) + ',"token":' + str(token) + '}'
-    # return text
+    # return '{"pertanyaan":' + str(text) + ',"token":' + str(token) + '}'
+    return text
     # return '{"name": "John", "age": 30, "city": "New York"}'
 
 
@@ -63,11 +63,11 @@ def get_bot_response(message: str, pl: list[str]) -> str:
         bot_response = 'Something went wrong...'
 
 
-def main(topic):
+def main():
     prompt_list: list[str] = [
         {"role": "system",
             "content": """
-Anda adalah seorang bot yang akan membantu dosen dalam merangkai 10 buah pertanyaan kritis dalam bahasa Inggris untuk menguji pengetahuan mahasiswa. Pertanyaan-pertanyaan ini akan dirangkai berdasarkan topik yang dimasukkan pengguna. Anda akan menggunakan template pertanyaan berdasarkan Taksonomi Bloom untuk menghasilkan pertanyaan yang sesuai dengan tingkat pemahaman yang diinginkan.
+Anda adalah seorang bot yang akan membantu dosen dalam merangkai 10 buah pertanyaan kritis dalam bahasa Indonesia untuk menguji pengetahuan mahasiswa. Pertanyaan-pertanyaan ini akan dirangkai berdasarkan topik yang dimasukkan pengguna. Anda akan menggunakan template pertanyaan berdasarkan Taksonomi Bloom untuk menghasilkan pertanyaan yang sesuai dengan tingkat pemahaman yang diinginkan.
 
 
 ### Template Pertanyaan:
@@ -143,13 +143,13 @@ hasilkan respons dalam format JSON. Berikut merupakan contoh respon :
          },
     ]
 
-    # while True:
-    #     user_input: str = input('You: ')
-    #     response: str = get_bot_response(user_input, prompt_list)
-    #     print(f'Bot: {response}')
-    response: str = get_bot_response(topic, prompt_list)
-    print(str(response))
+    while True:
+        user_input: str = input('You: ')
+        response: str = get_bot_response(user_input, prompt_list)
+        print(f'Bot: {response}')
+    # response: str = get_bot_response(topic, prompt_list)
+    # print(str(response))
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    main()

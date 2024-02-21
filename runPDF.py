@@ -1,6 +1,7 @@
 import openai
 import sys
 import json
+from PyPDF2 import PdfReader
 
 # with open('/hidden.txt') as file:
 # openai.api_key = file.read()
@@ -63,47 +64,50 @@ def get_bot_response(message: str, pl: list[str]) -> str:
         bot_response = 'Something went wrong...'
 
 
-def main(topic):
+def main(file):
+    reader = PdfReader(file)
+    page = reader.pages[0]
+    text = page.extract_text()
     prompt_list: list[str] = [
         {"role": "system",
             "content": """
-Anda adalah seorang bot yang akan membantu dosen dalam merangkai 10 buah pertanyaan kritis dalam bahasa Inggris untuk menguji pengetahuan mahasiswa. Pertanyaan-pertanyaan ini akan dirangkai berdasarkan topik yang dimasukkan pengguna. Anda akan menggunakan template pertanyaan berdasarkan Taksonomi Bloom untuk menghasilkan pertanyaan yang sesuai dengan tingkat pemahaman yang diinginkan.
+Anda adalah seorang bot yang akan membantu dosen dalam merangkai 10 buah pertanyaan kritis dalam bahasa Inggris untuk menguji pengetahuan mahasiswa. Pertanyaan-pertanyaan ini akan dirangkai berdasarkan data yang dimasukkan oleh pengguna dan ambil kata bendanya. Anda akan menggunakan template pertanyaan berdasarkan Taksonomi Bloom untuk menghasilkan pertanyaan yang sesuai dengan tingkat pemahaman yang diinginkan.
 
 
 ### Template Pertanyaan:
 Berikut adalah template pertanyaan yang dapat digunakan:
 
 #### Remembering (Mengingat):
-1. Apa itu …?
-2. Di mana …?
-3. Bagaimana ___ terjadi?
-4. Mengapa …?
-5. Bagaimana Anda akan menunjukkan …?
-6. Yang mana …?
-7. Bagaimana …?
-8. Kapan ___ terjadi?
-9. Bagaimana Anda akan menjelaskan …?
-10. Bagaimana Anda akan menggambarkan..?
-11. Bisakah Anda mengingat …?
-12. Bisakah Anda memilih …?
-13. Bisakah Anda menyebutkan tiga …?
-14. Siapa yang …?
+1. What is …?
+2. Where is …?
+3. How did ___ happen?
+4. Why did …?
+5. How would you show …?
+6. Which one …?
+7. How is …?
+8. When did ___ happen?
+9. How would you explain …?
+10. How would you describe..?
+11. Can you recall …?
+12. Can you select …?
+13. Can you list the three …?
+14. Who was …?
 
 #### Understanding (Memahami):
-1. Bagaimana Anda akan mengklasifikasikan jenis …?
-2. Bagaimana Anda akan membandingkan …? Kontraskan …?
-3. Akankah Anda menyatakan atau menafsirkan dengan kata-kata Anda sendiri …?
-4. Bagaimana Anda akan memperbaiki makna …?
-5. Fakta atau ide apa yang menunjukkan …?
-6. Apa ide utama dari …?
-7. Pernyataan mana yang mendukung …?
-8. Bisakah Anda menjelaskan apa yang sedang terjadi …?
-9. Apa yang dimaksud …?
-10. Apa yang dapat Anda katakan tentang …?
-11. Mana yang merupakan jawaban terbaik …?
-12. Bagaimana Anda akan merangkum …?
+1. How would you classify the type of …?
+2. How would you compare …? Contrast …?
+3. Will you state or interpret in your own words …?
+4. How would you rephrase the meaning …?
+5. What facts or ideas show …?
+6. What is the main idea of …?
+7. Which statements support …?
+8. Can you explain what is happening …?
+9. What is meant …?
+10. What can you say about …?
+11. Which is the best answer …?
+12. How would you summarize …? 
 
-Dari masing-masing kategori di atas, buat 5 pertanyaan understanding dan 5 pertanyaan remembering. Usahakan untuk tidak bertanya tentang sejarah yang hanya menyangkut waktu dan juga JANGAN MENGGUNAKAN TEMPLATE PERTANYAAN YANG SAMA LEBIH DARI 2X, tetapi Perluas/Perdalam materi berdasarkan kata-kata kunci yang dimasukkan pengguna.
+Dari masing-masing kategori di atas, buat 5 pertanyaan understanding dan 5 pertanyaan remembering sehingga total menjadi 10 pertanyaan . Usahakan untuk tidak bertanya tentang sejarah yang hanya menyangkut waktu dan juga JANGAN MENGGUNAKAN TEMPLATE PERTANYAAN YANG SAMA LEBIH DARI 2X, tetapi Perluas/Perdalam materi berdasarkan kata-kata kunci yang dimasukkan pengguna.
 
 hasilkan respons dalam format JSON. Berikut merupakan contoh respon :
 
@@ -143,11 +147,7 @@ hasilkan respons dalam format JSON. Berikut merupakan contoh respon :
          },
     ]
 
-    # while True:
-    #     user_input: str = input('You: ')
-    #     response: str = get_bot_response(user_input, prompt_list)
-    #     print(f'Bot: {response}')
-    response: str = get_bot_response(topic, prompt_list)
+    response: str = get_bot_response(text, prompt_list)
     print(str(response))
 
 
