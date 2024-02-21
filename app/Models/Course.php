@@ -5,17 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserRole extends Model
+class Course extends Model
 {
     use HasFactory;
+
 
     /**
      * The primary key associated with the table.
      *
      * @var string
      */
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'code';
 
+    /**
+     * The "type" of the primary key ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +30,7 @@ class UserRole extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id', 'role_guid'
+        'code', 'name', 'description'
     ];
 
     /**
@@ -46,4 +53,11 @@ class UserRole extends Model
         'updated_at' => 'datetime',
         // 'status' => StatusEnum::class
     ];
+    /**
+     * TOPIC OBJECT
+     */
+    public function topic()
+    {
+        return $this->hasMany(Topic::class);
+    }
 }

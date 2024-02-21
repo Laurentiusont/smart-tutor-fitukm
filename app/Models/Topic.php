@@ -4,18 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Uuid;
 
-class UserRole extends Model
+class Topic extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuid;
 
     /**
      * The primary key associated with the table.
      *
      * @var string
      */
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'guid';
 
+    /**
+     * The "type" of the primary key ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +30,7 @@ class UserRole extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id', 'role_guid'
+        'name', 'description', 'course_code'
     ];
 
     /**
@@ -46,4 +53,18 @@ class UserRole extends Model
         'updated_at' => 'datetime',
         // 'status' => StatusEnum::class
     ];
+    /**
+     * QUESTION OBJECT
+     */
+    public function question()
+    {
+        return $this->hasMany(Question::class);
+    }
+    /**
+     * COURSE OBJECT
+     */
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
 }

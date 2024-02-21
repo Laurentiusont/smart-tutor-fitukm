@@ -4,17 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Uuid;
 
-class UserRole extends Model
+class Assistant extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuid;
 
     /**
      * The primary key associated with the table.
      *
      * @var string
      */
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'guid';
 
 
     /**
@@ -23,7 +24,7 @@ class UserRole extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id', 'role_guid'
+        'user_id', 'course_code'
     ];
 
     /**
@@ -46,4 +47,18 @@ class UserRole extends Model
         'updated_at' => 'datetime',
         // 'status' => StatusEnum::class
     ];
+    /**
+     * USER OBJECT
+     */
+    public function user()
+    {
+        return $this->belongsTo(user::class);
+    }
+    /**
+     * COURSE OBJECT
+     */
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
 }

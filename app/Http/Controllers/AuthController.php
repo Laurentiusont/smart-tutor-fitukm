@@ -17,11 +17,6 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['index', 'login', 'register']]);
     }
 
-    public function index()
-    {
-        return view('auth.login');
-    }
-
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -47,11 +42,11 @@ class AuthController extends Controller
         }
 
         $payloadable = [
-            'user_id' => $user->user_id,
+            'user_id' => $user->id,
             'name' => $user->name,
             'username' => $user->username,
             'email' => $user->email,
-            'role' => $user->role,
+            'role_guid' => $user->role_guid,
         ];
 
         $token = JWTAuth::fromUser($user, $payloadable);

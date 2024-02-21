@@ -1,15 +1,20 @@
 <?php
 
+use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\OtpController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\JawabanController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\MateriController;
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SoalController;
+use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserController;
-use App\Models\Jawaban;
-use App\Models\MataKuliah;
-use App\Models\Soal;
+use App\Http\Controllers\UserCourseController;
+use App\Http\Controllers\UserMataKuliahController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +44,18 @@ Route::group([
     $router->post('/login', [AuthController::class, 'login'])->name('login');
 });
 
+/**
+ * FORGOT PASSWORD
+ */
+Route::group([
+    'prefix' => $url . 'forgot-password',
+    'middleware' => 'api',
+], function ($router) {
+    $router->post('/generate-otp', [OtpController::class, 'generateOtp']);
+    $router->post('/validate-otp', [OtpController::class, 'validateOtp']);
+    $router->post('/reset-password', [PasswordController::class, 'resetPassword']);
+});
+
 Route::group([
     'prefix' => $url . 'auth',
     'middleware' => 'jwt.verify',
@@ -66,12 +83,14 @@ Route::group([
     'prefix' => $url . 'question',
     'middleware' => 'jwt.verify'
 ], function ($router) {
-    $router->get('/', [SoalController::class, 'showData']);
-    $router->put('/', [SoalController::class, 'updateData']);
-    $router->get('/{guid}', [SoalController::class, 'getData']);
-    $router->delete('/{guid}', [SoalController::class, 'deleteData']);
-    $router->get('/generate', [SoalController::class, 'generateData']);
-    $router->post('/', [SoalController::class, 'insertData']);
+    $router->post('/upload-file', [QuestionController::class, 'uploadFile']);
+    $router->get('/generate', [QuestionController::class, 'generateData']);
+    $router->get('/show/{guid}', [QuestionController::class, 'showData']);
+    $router->put('/', [QuestionController::class, 'updateData']);
+    $router->get('/{guid}', [QuestionController::class, 'getData']);
+    $router->delete('/{guid}', [QuestionController::class, 'deleteData']);
+
+    $router->post('/', [QuestionController::class, 'insertData']);
 });
 
 /**
@@ -89,43 +108,58 @@ Route::group([
 });
 
 /**
- * JAWABAN
+ * ANSWER
  */
 Route::group([
-    'prefix' => $url . 'jawaban',
+    'prefix' => $url . 'answer',
     'middleware' => 'jwt.verify'
 ], function ($router) {
-    $router->get('/', [JawabanController::class, 'showData']);
-    $router->put('/', [JawabanController::class, 'updateData']);
-    $router->get('/{guid}', [JawabanController::class, 'getData']);
-    $router->delete('/{guid}', [JawabanController::class, 'deleteData']);
-    $router->post('/', [JawabanController::class, 'insertData']);
+    $router->get('/', [AnswerController::class, 'showData']);
+    $router->put('/', [AnswerController::class, 'updateData']);
+    $router->get('/{guid}', [AnswerController::class, 'getData']);
+    $router->delete('/{guid}', [AnswerController::class, 'deleteData']);
+    $router->post('/', [AnswerController::class, 'insertData']);
 });
 
 /**
- * MATERI
+ * TOPIC
  */
 Route::group([
-    'prefix' => $url . 'materi',
+    'prefix' => $url . 'topic',
     'middleware' => 'jwt.verify'
 ], function ($router) {
-    $router->get('/', [MateriController::class, 'showData']);
-    $router->put('/', [MateriController::class, 'updateData']);
-    $router->get('/{guid}', [MateriController::class, 'getData']);
-    $router->delete('/{guid}', [MateriController::class, 'deleteData']);
-    $router->post('/', [MateriController::class, 'insertData']);
+    $router->get('/', [TopicController::class, 'showData']);
+    $router->put('/', [TopicController::class, 'updateData']);
+    $router->get('/{guid}', [TopicController::class, 'getData']);
+    $router->delete('/{guid}', [TopicController::class, 'deleteData']);
+    $router->post('/', [TopicController::class, 'insertData']);
+    $router->post('/filter/course', [TopicController::class, 'topicByCourse']);
 });
 
 /**
- * MATA KULIAH
+ * COURSE
  */
 Route::group([
-    'prefix' => $url . 'mata-kuliah',
+    'prefix' => $url . 'course',
     'middleware' => 'jwt.verify'
 ], function ($router) {
-    $router->get('/', [MataKuliahController::class, 'showData']);
-    $router->put('/', [MataKuliahController::class, 'updateData']);
-    $router->get('/{kode}', [MataKuliahController::class, 'getData']);
-    $router->delete('/{kode}', [MataKuliahController::class, 'deleteData']);
-    $router->post('/', [MataKuliahController::class, 'insertData']);
+    $router->get('/', [CourseController::class, 'showData']);
+    $router->put('/', [CourseController::class, 'updateData']);
+    $router->get('/{code}', [CourseController::class, 'getData']);
+    $router->delete('/{code}', [CourseController::class, 'deleteData']);
+    $router->post('/', [CourseController::class, 'insertData']);
+});
+
+/**
+ * USER COURSE
+ */
+Route::group([
+    'prefix' => $url . 'user-course',
+    'middleware' => 'jwt.verify'
+], function ($router) {
+    $router->get('/', [UserCourseController::class, 'showData']);
+    $router->put('/', [UserCourseController::class, 'updateData']);
+    $router->get('/user/{id}', [UserCourseController::class, 'getDataByUser']);
+    $router->delete('/{code}', [UserCourseController::class, 'deleteData']);
+    $router->post('/', [UserCourseController::class, 'insertData']);
 });

@@ -10,8 +10,6 @@ class Role extends Model
 {
     use HasFactory, Uuid;
 
-    protected $table = 'role';
-
     /**
      * The primary key associated with the table.
      *

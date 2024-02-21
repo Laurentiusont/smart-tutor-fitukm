@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
             'name' => 'Laurentius Gusti Ontoseno Panata Yudha',
             'email' => '2172028@maranatha.ac.id',
             'password' => Hash::make('asd123'),
+            'role_guid' => "120014de-1d48-4947-b801-afe701bb19b8",
             'created_at' => now(),
             'updated_at' => now()
         ]);
