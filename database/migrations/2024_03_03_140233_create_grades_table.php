@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('answers', function (Blueprint $table) {
+        Schema::create('grades', function (Blueprint $table) {
             $table->uuid('guid')->primary();
-            $table->string('answer')->nullable();
-            $table->char('question_guid', 50);
+            $table->char('topic_guid', 50);
             $table->char('user_id', 10);
-            $table->foreign('question_guid')->references('guid')->on('questions')->onDelete('cascade');
+            $table->integer('grade')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('topic_guid')->references('guid')->on('topics')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jawaban');
+        Schema::dropIfExists('grades');
     }
 };

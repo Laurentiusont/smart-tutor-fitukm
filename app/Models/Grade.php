@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuid;
 
-class Topic extends Model
+
+class Grade extends Model
 {
     use HasFactory, Uuid;
 
@@ -17,12 +18,6 @@ class Topic extends Model
      */
     protected $primaryKey = 'guid';
 
-    /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -30,7 +25,7 @@ class Topic extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'description', 'course_code', 'time_start', 'time_end'
+        'user_id', 'topic_guid', 'grade'
     ];
 
     /**
@@ -54,24 +49,17 @@ class Topic extends Model
         // 'status' => StatusEnum::class
     ];
     /**
-     * QUESTION OBJECT
+     * USER OBJECT
      */
-    public function question()
+    public function user()
     {
-        return $this->hasMany(Question::class);
+        return $this->belongsTo(user::class);
     }
     /**
-     * COURSE OBJECT
+     * TOPIC OBJECT
      */
-    public function course()
+    public function topic()
     {
-        return $this->belongsTo(Course::class);
-    }
-    /**
-     * GRADE OBJECT
-     */
-    public function grade()
-    {
-        return $this->hasMany(Grade::class);
+        return $this->belongsTo(Topic::class);
     }
 }

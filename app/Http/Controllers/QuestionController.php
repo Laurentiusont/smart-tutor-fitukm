@@ -40,6 +40,10 @@ class QuestionController extends Controller
             );
         }
 
+        if (!isset($process)) {
+            return ResponseController::getResponse(null, 400, "Failed to Execute Process");
+        }
+
         $data = $process->output();
         $data = json_decode($data, true);
         $dataTable = DataTables::of($data['pertanyaan'])
@@ -71,9 +75,20 @@ class QuestionController extends Controller
         return ResponseController::getResponse($data, 200, 'Success');
     }
 
-    public function showData($guid)
+    public function showData($guid, Request $request)
     {
-        $data = Question::where('topic_guid', '=', $guid)->get();
+        if ($request['user_id']) {
+            $userId = $request['user_id'];
+            $data = Question::with(['user_answer' => function ($query) use ($userId) {
+                $query->where('user_id', '=', $userId);
+            }])->where('topic_guid', '=', $guid)->get();
+        } else {
+            $data = Question::where('topic_guid', '=', $guid)->get();
+        }
+
+        if (!isset($data)) {
+            return ResponseController::getResponse(null, 400, "Data not found");
+        }
         $dataTable = DataTables::of($data)
             ->addIndexColumn()
             ->make(true);

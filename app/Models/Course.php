@@ -60,4 +60,11 @@ class Course extends Model
     {
         return $this->hasMany(Topic::class);
     }
+    /**
+     * USER COURSE OBJECT
+     */
+    public function user_course()
+    {
+        return $this->hasMany(UserCourse::class);
+    }
 }

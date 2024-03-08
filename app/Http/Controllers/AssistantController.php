@@ -2,15 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Assistant;
 use App\Models\User;
-use App\Models\UserCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Yajra\DataTables\Facades\DataTables;
 
-class UserCourseController extends Controller
+
+class AssistantController extends Controller
 {
+    public function getData($code)
+    {
+        /// GET DATA
+        $data = Assistant::with('user')
+            ->where('course_code', '=', $code)
+            ->get();
+
+        if (!isset($data)) {
+            return ResponseController::getResponse(null, 400, "Data not found");
+        }
+
+        $dataTable = DataTables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+
+        return $dataTable;
+    }
+    public function checkData(Request $request)
+    {
+        /// GET DATA
+        $data = Assistant::where('user_id', '=', $request['user_id'])
+            ->where('course_code', '=', $request['course_code'])
+            ->get();
+
+        if ($data->count() > 0) {
+            $response = true;
+        } else {
+            $response = false;
+        }
+
+
+        return ResponseController::getResponse($response, 200, 'Success');
+    }
 
     public function insertData(Request $request)
     {
@@ -37,7 +70,7 @@ class UserCourseController extends Controller
         }
 
         foreach ($users as $user) {
-            $data = UserCourse::create([
+            $data = Assistant::create([
                 'user_id' => $user,
                 'course_code' => $request['course_code'],
             ]);
@@ -45,27 +78,9 @@ class UserCourseController extends Controller
 
         return ResponseController::getResponse($data, 200, 'Success');
     }
-
-    public function getDataByUser($id)
-    {
-        $data = UserCourse::where('user_id', '=', $id)->with('user', 'course')->get();
-
-        return ResponseController::getResponse($data, 200, 'Success');
-    }
-    public function getUserByCourse($code)
-    {
-        $data = UserCourse::where('course_code', '=', $code)
-            ->with('user')
-            ->get();
-        $dataTable = DataTables::of($data)
-            ->addIndexColumn()
-            ->make(true);
-
-        return $dataTable;
-    }
     public function deleteData($guid)
     {
-        $data = UserCourse::where('guid', '=', $guid)->first();
+        $data = Assistant::where('guid', '=', $guid)->first();
         $data->delete();
 
         return ResponseController::getResponse(null, 200, 'Success');

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->uuid('guid')->primary();
             $table->char('name', 100);
             $table->string('description')->nullable();
+            $table->dateTime('time_start')->nullable();
+            $table->dateTime('time_end')->nullable();
             $table->char('course_code', 10);
             $table->foreign('course_code')->references('code')->on('courses')->onDelete('cascade');
             $table->timestamps();

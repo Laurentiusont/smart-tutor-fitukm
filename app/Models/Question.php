@@ -60,4 +60,11 @@ class Question extends Model
     {
         return $this->belongsTo(Topic::class);
     }
+    /**
+     * ANSWER OBJECT
+     */
+    public function user_answer()
+    {
+        return $this->hasMany(Answer::class);
+    }
 }

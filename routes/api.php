@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\GradeController;
 use App\Http\Controllers\JawabanController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\MateriController;
@@ -74,6 +76,14 @@ Route::group([
     // $router->put('/update', [ProfileController::class, 'updateUser']);
     // $router->put('/change-password', [PasswordController::class, 'changePassword']);
     // $router->put('/update-fcm-token', [FcmController::class, 'updateFcmToken']);
+    $router->get('/', [UserController::class, 'showData']);
+    $router->get('/{id}', [UserController::class, 'getData']);
+    $router->put('/', [UserController::class, 'updateData']);
+    $router->delete('/{id}', [UserController::class, 'deleteData']);
+    $router->post('/', [UserController::class, 'insertData']);
+    $router->post('/user-course', [UserController::class, 'filterUserCourse']);
+    $router->post('/assistant', [UserController::class, 'filterAssistant']);
+    $router->post('/check/role', [UserController::class, 'checkAssistant']);
 });
 
 /**
@@ -116,7 +126,8 @@ Route::group([
 ], function ($router) {
     $router->get('/', [AnswerController::class, 'showData']);
     $router->put('/', [AnswerController::class, 'updateData']);
-    $router->get('/{guid}', [AnswerController::class, 'getData']);
+    $router->get('/{guid}/{id}', [AnswerController::class, 'getDataByUser']);
+    $router->post('/user', [AnswerController::class, 'getData']);
     $router->delete('/{guid}', [AnswerController::class, 'deleteData']);
     $router->post('/', [AnswerController::class, 'insertData']);
 });
@@ -134,6 +145,8 @@ Route::group([
     $router->delete('/{guid}', [TopicController::class, 'deleteData']);
     $router->post('/', [TopicController::class, 'insertData']);
     $router->post('/filter/course', [TopicController::class, 'topicByCourse']);
+    $router->get('/filter/deadline', [TopicController::class, 'topicByDeadline']);
+    $router->post('/check/submit', [TopicController::class, 'checkSubmit']);
 });
 
 /**
@@ -159,7 +172,34 @@ Route::group([
 ], function ($router) {
     $router->get('/', [UserCourseController::class, 'showData']);
     $router->put('/', [UserCourseController::class, 'updateData']);
+    $router->get('/course/{code}', [UserCourseController::class, 'getUserByCourse']);
     $router->get('/user/{id}', [UserCourseController::class, 'getDataByUser']);
     $router->delete('/{code}', [UserCourseController::class, 'deleteData']);
     $router->post('/', [UserCourseController::class, 'insertData']);
+});
+
+/**
+ * ASSISTANT
+ */
+Route::group([
+    'prefix' => $url . 'assistant',
+    'middleware' => 'jwt.verify'
+], function ($router) {
+    $router->get('/{code}', [AssistantController::class, 'getData']);
+    $router->delete('/{guid}', [AssistantController::class, 'deleteData']);
+    $router->post('/', [AssistantController::class, 'insertData']);
+    $router->post('/check', [AssistantController::class, 'checkData']);
+});
+
+/**
+ * GRADE
+ */
+Route::group([
+    'prefix' => $url . 'grade',
+    'middleware' => 'jwt.verify'
+], function ($router) {
+    $router->get('/topic/{code}/{guid}', [GradeController::class, 'getDataByTopic']);
+    $router->get('/', [GradeController::class, 'getData']);
+    $router->post('/', [GradeController::class, 'insertData']);
+    $router->put('/', [GradeController::class, 'updateData']);
 });

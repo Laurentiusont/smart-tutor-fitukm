@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Assistant;
 use App\Models\Course;
+use App\Models\UserCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -16,6 +18,7 @@ class CourseController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
             'code' => 'required|string|max:10',
+            'user_id' => 'required|string|max:10',
             'description' => 'required|string',
         ], MessagesController::messages());
 
@@ -27,13 +30,38 @@ class CourseController extends Controller
             'name' => $request['name'],
             'description' => $request['description'],
         ]);
-
+        $data = UserCourse::create([
+            'course_code' => $request['code'],
+            'user_id' => $request['user_id'],
+        ]);
         return ResponseController::getResponse($data, 200, 'Success');
     }
 
-    public function showData()
+    public function showData(Request $request)
     {
-        $data = Course::all();
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|string|max:10',
+            'role_name' => 'required|string|max:10',
+        ], MessagesController::messages());
+
+        if ($validator->fails()) {
+            return ResponseController::getResponse(null, 422, $validator->errors()->first());
+        }
+
+        if ($request['role_name'] == "admin") {
+            $data = Course::all();
+        } else {
+            $userCourse = UserCourse::where('user_id', '=', $request['user_id'])->pluck('course_code')->toArray();
+            $assistant = Assistant::where('user_id', '=', $request['user_id'])->pluck('course_code')->toArray();
+
+            $combinedCodes = array_merge($userCourse, $assistant);
+
+            $data = Course::whereIn('code', $combinedCodes)->get();
+        }
+
+        if (!isset($data)) {
+            return ResponseController::getResponse(null, 400, "Data not found");
+        }
         $dataTable = DataTables::of($data)
             ->addIndexColumn()
             ->make(true);
