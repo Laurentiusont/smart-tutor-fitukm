@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -66,5 +67,7 @@ class Kernel extends HttpKernel
         'auth.token' => \App\Http\Middleware\AuthMiddleware::class,
         'auth.guest' => \App\Http\Middleware\GuestMiddleware::class,
         'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'admin.lecturer.assistant' => \App\Http\Middleware\AdminLecturerAssistantMiddleware::class,
     ];
 }

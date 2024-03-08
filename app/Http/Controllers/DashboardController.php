@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class DashboardController extends Controller
@@ -11,6 +12,7 @@ class DashboardController extends Controller
     {
         $session = new Session();
         $token = $session->get('access_token');
-        return view('dashboard', compact('token', 'session'));
+        $id = $session->get('id');
+        return view('dashboard', compact('token', 'id', 'session'));
     }
 }

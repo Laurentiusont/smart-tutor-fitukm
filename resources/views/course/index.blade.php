@@ -24,10 +24,10 @@
                     <table class="table" id="table-data">
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Action</th>
+                                <th class="text-center">Code</th>
+                                <th class="text-center">Name</th>
+                                <th class="text-center">Description</th>
+                                <th class="text-center">Action</th>
                             </tr>
                         </thead>
                     </table>
@@ -157,7 +157,10 @@
                         request.setRequestHeader("Authorization",
                             "Bearer {{ $token }}");
                     },
-                    "data": {},
+                    "data": {
+                        user_id: "{{ $id }}",
+                        role_name: "{{ $role }}"
+                    },
                 },
                 "columns": [{
                         data: 'code',
@@ -176,13 +179,21 @@
                         title: "Actions",
                         render: function(data, type, row) {
                             return '<a href="/topic/' + data['code'] +
-                                '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;"></i></a>' +
+                                '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;"></i></a>'
+                            @isRole(['admin', 'lecturer', 'assistant']) +
+                                '<a href = "/student/' +
+                                data['code'] +
+                                '" role="button" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-users" style="font-size: 15px; color: purple;"></i></a>' +
+                                '<a href="/assistant/' + data['code'] +
+                                '" role="button" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-handshake-o" style="font-size: 15px; color: orange;"></i></a>' +
+
                                 '<a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"data-code="' +
                                 data['code'] +
                                 '"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
                                 '<a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-code="' +
                                 data['code'] +
                                 '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
+                            @endisRole
                         },
                         "orderable": false,
                         "searchable": false
@@ -211,13 +222,15 @@
                 dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
                 displayLength: 10,
                 lengthMenu: [7, 10, 25, 50],
-                buttons: [{
-                    text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Data</span>',
-                    className: "create-new btn btn-primary",
-                    action: function(e, dt, node, config) {
-                        $('#modalAdd').modal('show');
+                buttons: [@isRole(['admin', 'lecturer']) {
+                        text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Course</span>',
+                        className: "create-new btn btn-primary",
+                        action: function(e, dt, node, config) {
+                            $('#modalAdd').modal('show');
+                        }
                     }
-                }],
+                    @endisRole
+                ],
                 responsive: {
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
@@ -339,6 +352,7 @@
                         code: code,
                         name: name,
                         description: description,
+                        user_id: "{{ $id }}"
                     },
                     beforeSend: function(request) {
                         request.setRequestHeader("Authorization",

@@ -10,6 +10,9 @@ class CourseController extends Controller
     {
         $session = new Session();
         $token = $session->get('access_token');
-        return view('course.index', compact('token', 'session'));
+        $id = $session->get('id');
+        $role = $session->get('role_name');
+
+        return view('course.index', compact('token', 'id', 'role', 'session'));
     }
 }

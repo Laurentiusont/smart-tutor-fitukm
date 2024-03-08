@@ -11,6 +11,7 @@ class TopicController extends Controller
     {
         $session = new Session();
         $token = $session->get('access_token');
-        return view('topic.index', compact('token', 'code', 'session'));
+        $id = $session->get('id');
+        return view('topic.index', compact('token', 'code', 'id', 'session'));
     }
 }

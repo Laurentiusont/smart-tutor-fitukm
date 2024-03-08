@@ -29,33 +29,35 @@
                         Feature
                     </h6>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('question') ? 'active' : '' }}" href="{{ url('question') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/question.png') }}" width="14px" height="14px"
-                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>shop </title>
-                        </div>
-                        <p class="m-1 textSidebar">Question</p>
-                    </a>
-                </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link {{ Request::is('soal') ? 'active' : '' }}" href="{{ url('soal') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-inventory.png') }}" width="14px" height="14px"
-                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>shop </title>
-                        </div>
-                        <p class="m-1 textSidebar">Soal</p>
-                    </a>
-                </li> --}}
+                @isRole(['admin', 'lecturer', 'assistant'])
+                    <li class="nav-item">
+                        <a class="nav-link {{ Request::is('user') ? 'active' : '' }}" href="{{ url('user') }}">
+                            <div
+                                class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                                <img src="{{ asset('assets/img/group.png') }}" width="14px" height="14px"
+                                    viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <title>shop </title>
+                            </div>
+                            <p class="m-1 textSidebar">User</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ Request::is('question') ? 'active' : '' }} " href="{{ url('question') }}">
+                            <div
+                                class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                                <img src="{{ asset('assets/img/question.png') }}" width="14px" height="14px"
+                                    viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <title>shop </title>
+                            </div>
+                            <p class="m-1 textSidebar">Generate Question</p>
+                        </a>
+                    </li>
+                @endisRole
 
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('course') ? 'active' : '' }} {{ Request::is('topic/*') ? 'active open' : '' }} {{ Request::is('question/*') ? 'active open' : '' }}"
+                    <a class="nav-link {{ Request::is('course') ? 'active' : '' }} {{ Request::is('topic/*') ? 'active open' : '' }} {{ Request::is('question/*') ? 'active open' : '' }} {{ Request::is('grade/*') ? 'active open' : '' }} {{ Request::is('user/answer/*') ? 'active open' : '' }} {{ Request::is('answer/detail/*') ? 'active open' : '' }} {{ Request::is('student/*') ? 'active open' : '' }} {{ Request::is('assistant/*') ? 'active open' : '' }}"
                         href="{{ url('course') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -67,20 +69,6 @@
                         <p class="m-1 textSidebar">Course</p>
                     </a>
                 </li>
-
-                {{-- <li class="nav-item">
-                    <a class="nav-link {{ Request::is('materi') ? 'active' : '' }}" href="{{ url('materi') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-inventory.png') }}" width="14px" height="14px"
-                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>shop </title>
-                        </div>
-                        <p class="m-1 textSidebar">Materi</p>
-                    </a>
-                </li> --}}
-
 
                 <li class="nav-item">
                     <a class="nav-link " role="button" id="logout">

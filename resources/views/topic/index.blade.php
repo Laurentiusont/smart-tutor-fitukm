@@ -24,10 +24,15 @@
                     <table class="table" id="table-data">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Actions</th>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Name</th>
+                                <th class="text-center">Description</th>
+                                <th class="text-center">Start Time</th>
+                                <th class="text-center">End Time</th>
+                                @isRole(['student'])
+                                    <th class="text-center">Grade</th>
+                                @endisRole
+                                <th class="text-center">Actions</th>
                             </tr>
                         </thead>
                     </table>
@@ -50,6 +55,16 @@
                                         <div class="mb-3">
                                             <label for="add-description" class="form-label">Description</label>
                                             <textarea class="form-control" id="add-description" name="add-description" rows="3" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-start-time" class="form-label">Start Time</label>
+                                            <input type="datetime-local" class="form-control" id="add-start-time"
+                                                name="add-start-time" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="add-end-time" class="form-label">End Time</label>
+                                            <input type="datetime-local" class="form-control" id="add-end-time"
+                                                name="add-end-time" required>
                                         </div>
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </form>
@@ -111,7 +126,16 @@
                                             <label for="edit-description" class="form-label">Description</label>
                                             <textarea class="form-control" id="edit-description" name="edit-description" rows="3" required></textarea>
                                         </div>
-                                        <!-- Add other input fields as needed -->
+                                        <div class="mb-3">
+                                            <label for="edit-start-time" class="form-label">Start Time</label>
+                                            <input type="datetime-local" class="form-control" id="edit-start-time"
+                                                name="edit-start-time" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="edit-end-time" class="form-label">End Time</label>
+                                            <input type="datetime-local" class="form-control" id="edit-end-time"
+                                                name="edit-end-time" required>
+                                        </div>
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </form>
                                 </div>
@@ -140,6 +164,28 @@
 @section('custom-javascript')
     <script type="text/javascript">
         $(document).ready(function() {
+            $('#add-start-time').on('change', function() {
+                var startTime = new Date($(this).val());
+                var endTimeInput = $('#add-end-time');
+                var endTime = new Date(endTimeInput.val());
+
+                endTimeInput.prop('min', $(this).val());
+
+                if (endTime < startTime) {
+                    endTimeInput.val('');
+                }
+            });
+            $('#edit-start-time').on('change', function() {
+                var startTime = new Date($(this).val());
+                var endTimeInput = $('#edit-end-time');
+                var endTime = new Date(endTimeInput.val());
+
+                endTimeInput.prop('min', $(this).val());
+
+                if (endTime < startTime) {
+                    endTimeInput.val('');
+                }
+            });
             $('#table-data').DataTable({
                 "destroy": true,
                 "processing": true,
@@ -153,6 +199,7 @@
                     },
                     "data": {
                         "code": "{{ $code }}",
+                        "user_id": "{{ $id }}"
                     },
                 },
                 "columns": [{
@@ -170,17 +217,52 @@
                         }
                     },
                     {
+                        data: 'time_start',
+                    },
+                    {
+                        data: 'time_end',
+                    },
+                    @isRole(['student']) {
+                        data: 'grade',
+                        render: function(data, type, row) {
+                            if (data[0]) {
+                                if (data[0]['grade']) {
+                                    return data[0]['grade']
+                                } else {
+                                    return "ungrade"
+                                }
+
+                            } else {
+                                return "-"
+                            }
+
+                        }
+                    },
+                    @endisRole {
                         data: null,
                         title: "Actions",
                         render: function(data, type, row) {
+                            @isRole(['admin', 'lecturer', 'assistant'], $code)
                             return '<a href="/question/' + data['guid'] +
                                 '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;"></i></a>' +
+                                '<a href="/grade/{{ $code }}/' + data['guid'] +
+                                '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-percent" style="font-size: 15px; color: yellow;"></i></a>' +
                                 '<a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"data-guid="' +
                                 data['guid'] +
                                 '"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
                                 '<a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="' +
                                 data['guid'] +
                                 '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
+                            @endisRole
+                            @isRole(['student'])
+                            if (data['grade'][0] == null) {
+                                return '<a href="/user/answer/' + data['guid'] +
+                                    '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-pencil-square-o" style="font-size: 15px; color: green;"></i></a>'
+                            } else {
+                                return "-";
+                            }
+                            @endisRole
+
                         },
                         "orderable": false,
                         "searchable": false
@@ -209,13 +291,16 @@
                 dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
                 displayLength: 10,
                 lengthMenu: [7, 10, 25, 50],
-                buttons: [{
-                    text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Data</span>',
-                    className: "create-new btn btn-primary",
-                    action: function(e, dt, node, config) {
-                        $('#modalAdd').modal('show');
+                buttons: [
+                    @isRole(['admin', 'lecturer', 'assistant']) {
+                        text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Topic</span>',
+                        className: "create-new btn btn-primary",
+                        action: function(e, dt, node, config) {
+                            $('#modalAdd').modal('show');
+                        }
                     }
-                }],
+                    @endisRole
+                ],
                 responsive: {
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
@@ -283,6 +368,8 @@
                     success: function(result) {
                         $('#edit-name').val(result['data']['name']);
                         $('#edit-description').val(result['data']['description']);
+                        $('#edit-start-time').val(result['data']['time_start']);
+                        $('#edit-end-time').val(result['data']['time_end']);
                         $('#modalEdit').modal('show');
                     },
                     error: function(xhr, status, error) {
@@ -299,6 +386,9 @@
                 var guid = $('#guid').val();
                 var name = $('#edit-name').val();
                 var description = $('#edit-description').val();
+                var startTime = $('#edit-start-time').val();
+                var endTime = $('#edit-end-time').val();
+
 
                 $.ajax({
                     type: "PUT",
@@ -308,6 +398,8 @@
                         "name": name,
                         "description": description,
                         "course_code": "{{ $code }}",
+                        "time_start": startTime,
+                        "time_end": endTime
                     },
                     beforeSend: function(request) {
                         request.setRequestHeader("Authorization",
@@ -332,6 +424,9 @@
 
                 var name = $('#add-name').val();
                 var description = $('#add-description').val();
+                var startTime = $('#add-start-time').val();
+                var endTime = $('#add-end-time').val();
+                console.log(startTime);
 
                 $.ajax({
                     type: "POST",
@@ -339,7 +434,9 @@
                     data: {
                         name: name,
                         description: description,
-                        course_code: "{{ $code }}"
+                        course_code: "{{ $code }}",
+                        time_start: startTime,
+                        time_end: endTime
                     },
                     beforeSend: function(request) {
                         request.setRequestHeader("Authorization",

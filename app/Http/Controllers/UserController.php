@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Illuminate\Support\Facades\Http;
 
 class UserController extends Controller
 {
@@ -12,10 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::where('id', auth('api')->user()->id)
-            ->first();
-
-        return ResponseController::getResponse($user, 200, 'Get Profile User Success');
+        $session = new Session();
+        $token = $session->get('access_token');
+        return view('user.index', compact('token', 'session'));
     }
 
     /**
@@ -23,46 +24,20 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $session = new Session();
+        $token = $session->get('access_token');
+        return view('user.insert', compact('token', 'session'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function edit($id)
     {
-        //
-    }
+        $session = new Session();
+        $token = $session->get('access_token');
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer " . $token,
+            'Content-Type' => "application/json"
+        ])->get(env("URL_API", "http://example.com") . '/api/v1/user/' . $id);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
+        $data = json_decode($response, true);
+        return view('user.edit', compact('token', 'session', 'data'));
     }
 }

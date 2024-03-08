@@ -27,6 +27,7 @@
                         <span class="fa fa-lock"></span>
                     </div>
                 </div>
+                <label class="form-label fw-500 d-none" id="error-message-login" style="color: #EE3C3B;"></label>
                 @error('password')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -112,9 +113,6 @@
                             success: function(result) {
                                 // $('#loading-sign-in').addClass("d-none");
                                 // $('#btn-sign-in').removeClass("d-none");
-                                console.log(result['data'][
-                                    'name'
-                                ]);
 
                                 $.ajax({
                                     type: "POST",
@@ -130,6 +128,9 @@
                                         id: result['data'][
                                             'id'
                                         ],
+                                        role_name: result['data'][
+                                            'role'
+                                        ]['role_name'],
                                     },
                                     success: function(result) {
 
@@ -157,8 +158,8 @@
                         // $('#btn-sign-in').removeClass("d-none");
 
                         var jsonResponse = JSON.parse(xhr.responseText);
-                        // $('#error-message-login').text(jsonResponse['message']);
-                        // $('#error-message-login').removeClass("d-none");
+                        $('#error-message-login').text(jsonResponse['message']);
+                        $('#error-message-login').removeClass("d-none");
                     }
                 });
 
