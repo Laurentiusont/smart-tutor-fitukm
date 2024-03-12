@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grade;
+use App\Models\Role;
 use App\Models\UserCourse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -35,11 +36,15 @@ class GradeController extends Controller
      */
     public function getDataByTopic($code, $guid)
     {
-        $data = UserCourse::with(['user' => function ($query) use ($guid) {
-            $query->with(['grade' => function ($query) use ($guid) {
-                $query->where('topic_guid', '=', $guid);
-            }]);
-        }])
+        $role = Role::where('role_name', '=', 'student')->pluck('guid');
+        $data = UserCourse::whereHas('user', function ($query) use ($guid, $role) {
+            $query->where('role_guid', '=', $role);
+        })
+            ->with(['user' => function ($query) use ($guid) {
+                $query->with(['grade' => function ($query) use ($guid) {
+                    $query->where('topic_guid', '=', $guid);
+                }]);
+            }])
             ->where('course_code', '=', $code)->get();
         if (!isset($data)) {
             return ResponseController::getResponse(null, 400, "Data not found");

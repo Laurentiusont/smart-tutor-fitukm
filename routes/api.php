@@ -74,7 +74,7 @@ Route::group([
 ], function ($router) {
     $router->get('/self', [UserController::class, 'index']);
     // $router->put('/update', [ProfileController::class, 'updateUser']);
-    // $router->put('/change-password', [PasswordController::class, 'changePassword']);
+    $router->put('/change-password', [PasswordController::class, 'changePassword']);
     // $router->put('/update-fcm-token', [FcmController::class, 'updateFcmToken']);
     $router->get('/', [UserController::class, 'showData']);
     $router->get('/{id}', [UserController::class, 'getData']);

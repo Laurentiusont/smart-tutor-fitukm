@@ -110,7 +110,10 @@ class TopicController extends Controller
     public function getData($guid)
     {
         $data = Topic::where('guid', '=', $guid)->first();
-
+        $currentDateTime = Carbon::now('Asia/Jakarta');
+        if ($data->time_end < $currentDateTime) {
+            $data = false;
+        }
         return ResponseController::getResponse($data, 200, 'Success');
     }
     public function updateData(Request $request)

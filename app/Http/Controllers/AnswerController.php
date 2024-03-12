@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Answer;
 use App\Models\Question;
+use App\Models\Topic;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -20,12 +22,18 @@ class AnswerController extends Controller
         $validator = Validator::make($request->all(), [
             'question_guid' => 'required|string|max:40',
             'user_id' => 'required|string|max:10',
+            'topic_guid' => 'required|string|max:40',
         ], MessagesController::messages());
 
         if ($validator->fails()) {
             return ResponseController::getResponse(null, 422, $validator->errors()->first());
         }
-
+        $time_end = Topic::where('guid', '=', $request['topic_guid'])->pluck('time_end');
+        $currentDateTime = Carbon::now('Asia/Jakarta');
+        if ($time_end < $currentDateTime) {
+            $data = false;
+            return ResponseController::getResponse($data, 200, 'Success');
+        }
         $data = Answer::where('question_guid', '=', $request['question_guid'])
             ->where('user_id', '=', $request['user_id'])
             ->first();

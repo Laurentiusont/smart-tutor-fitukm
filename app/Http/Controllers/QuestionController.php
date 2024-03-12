@@ -36,7 +36,7 @@ class QuestionController extends Controller
             Storage::delete($request->get('path') . $request->get('name'));
         } else if ($request->get('noun') != "") {
             $process = Process::forever()->run(
-                ['C:\Users\ontos\AppData\Local\Programs\Python\Python311\python.exe', 'D:\Smart Tutor\main.py', $request->get('noun')]
+                ['C:\Users\ontos\AppData\Local\Programs\Python\Python311\python.exe', 'D:\Smart Tutor\main.py', $request->get('noun'), $request->get('language')]
             );
         }
 
