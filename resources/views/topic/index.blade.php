@@ -24,12 +24,18 @@
                     <table class="table" id="table-data">
                         <thead>
                             <tr>
-                                <th class="text-center">No</th>
-                                <th class="text-center">Name</th>
-                                <th class="text-center">Description</th>
-                                <th class="text-center">Start Time</th>
-                                <th class="text-center">End Time</th>
-                                @isRole(['student'])
+                                @isRole(['admin', 'lecturer', 'assistant'], $code)
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Description</th>
+                                    <th class="text-center">Start Time</th>
+                                    <th class="text-center">End Time</th>
+                                @else
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Description</th>
+                                    <th class="text-center">Start Time</th>
+                                    <th class="text-center">End Time</th>
                                     <th class="text-center">Grade</th>
                                 @endisRole
                                 <th class="text-center">Actions</th>
@@ -222,7 +228,9 @@
                     {
                         data: 'time_end',
                     },
-                    @isRole(['student']) {
+                    @isRole(['student'])
+                    @isRole(['assistant'], $code)
+                    @else {
                         data: 'grade',
                         render: function(data, type, row) {
                             if (data[0]) {
@@ -238,26 +246,26 @@
 
                         }
                     },
+                    @endisRole
                     @endisRole {
                         data: null,
                         title: "Actions",
                         render: function(data, type, row) {
                             @isRole(['admin', 'lecturer', 'assistant'], $code)
                             return '<a href="/question/' + data['guid'] +
-                                '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;"></i></a>' +
+                                '" role="button" class="edit-btn " style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;"></i></a>' +
                                 '<a href="/grade/{{ $code }}/' + data['guid'] +
-                                '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-percent" style="font-size: 15px; color: yellow;"></i></a>' +
+                                '" role="button" class="edit-btn " style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-percent" style="font-size: 15px; color: yellow;"></i></a>' +
                                 '<a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"data-guid="' +
                                 data['guid'] +
                                 '"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
-                                '<a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="' +
+                                '<a role="button" class="delete-btn " style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="' +
                                 data['guid'] +
                                 '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
-                            @endisRole
-                            @isRole(['student'])
+                            @else
                             if (data['grade'][0] == null) {
                                 return '<a href="/user/answer/' + data['guid'] +
-                                    '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-pencil-square-o" style="font-size: 15px; color: green;"></i></a>'
+                                    '" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-pencil-square-o" style="font-size: 15px; color: green;"></i></a>'
                             } else {
                                 return "-";
                             }
@@ -292,7 +300,7 @@
                 displayLength: 10,
                 lengthMenu: [7, 10, 25, 50],
                 buttons: [
-                    @isRole(['admin', 'lecturer', 'assistant']) {
+                    @isRole(['admin', 'lecturer', 'assistant'], $code) {
                         text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Topic</span>',
                         className: "create-new btn btn-primary",
                         action: function(e, dt, node, config) {
@@ -311,8 +319,10 @@
                         type: "column",
                         renderer: function(e, t, a) {
                             a = $.map(a, function(e, t) {
-                                return "" !== e.title ? '<tr data-dt-row="' + e.rowIndex +
-                                    '" data-dt-column="' + e.columnIndex + '"><td>' + e.title +
+                                return "" !== e.title ? '<tr data-dt-row="' + e
+                                    .rowIndex +
+                                    '" data-dt-column="' + e.columnIndex + '"><td>' + e
+                                    .title +
                                     ":</td> <td>" + e.data + "</td></tr>" : ""
                             }).join("");
                             return !!a && $('<table class="table"/><tbody />').append(a)

@@ -30,8 +30,12 @@ class AnswerController extends Controller
             'Content-Type' => "application/json"
         ])->get(env("URL_API", "http://example.com") . '/api/v1/topic/' . $guid);
         $topic = json_decode($responseTopic, true);
-        $name = $topic['data']['name'];
-        $code = $topic['data']['course_code'];
-        return view('answer.user-answer', compact('token', 'guid', 'name', 'id', 'code', 'session'));
+        if ($topic['data']) {
+            $name = $topic['data']['name'];
+            $code = $topic['data']['course_code'];
+            return view('answer.user-answer', compact('token', 'guid', 'name', 'id', 'code', 'session'));
+        } else {
+            return view('dashboard', compact('token', 'id', 'session'));
+        }
     }
 }

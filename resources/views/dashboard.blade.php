@@ -11,9 +11,9 @@
     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
         <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
         <li class="breadcrumb-item text-sm text-dark active text-capitalize" aria-current="page">
-            {{ str_replace('-', ' ', Request::path()) }}</li>
+            Dashboard</li>
     </ol>
-    <h5 class="font-weight-bolder mb-0 text-capitalize">{{ str_replace('-', ' ', Request::path()) }}</h5>
+    <h5 class="font-weight-bolder mb-0 text-capitalize">Dashboard</h5>
 @endsection
 @section('content')
     <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
@@ -29,7 +29,9 @@
                                 <th class="text-center">Topic</th>
                                 <th class="text-center">Start Time</th>
                                 <th class="text-center">End Time</th>
-                                <th class="text-center">Actions</th>
+                                @isRole(['student'])
+                                    <th class="text-center">Actions</th>
+                                @endisRole
                             </tr>
                         </thead>
                     </table>
@@ -90,7 +92,7 @@
                     {
                         data: 'time_end',
                     },
-                    {
+                    @isRole(['student']) {
                         data: null,
                         title: "Actions",
                         render: function(data, type, row) {
@@ -101,6 +103,7 @@
                         "searchable": false
 
                     },
+                    @endisRole
                 ],
                 "language": {
                     "emptyTable": "No data available in table",
@@ -140,7 +143,7 @@
                         text: 'CSV',
                         className: 'btn btn-primary d-none',
                         enabled: false
-                    }, // Set enabled to false to disable the CSV button
+                    },
                     {
                         extend: 'print',
                         exportOptions: {

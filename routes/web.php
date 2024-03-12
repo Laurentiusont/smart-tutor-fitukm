@@ -5,13 +5,13 @@ use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\Console\Question\Question;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,4 +60,6 @@ Route::group([
     Route::get('/user/create', [UserController::class, 'create'])->name('create-user');
     Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('edit-user');
     Route::get('/user/answer/{guid}', [AnswerController::class, 'fill'])->name('user-answer');
+    Route::get('/user/profile', [UserController::class, 'profile'])->name('user-profile');
+    Route::get('/password/change', [PasswordController::class, 'changePassword'])->name('change-password');
 });

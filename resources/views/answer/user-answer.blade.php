@@ -86,10 +86,19 @@
                         data: null,
                         render: function(data, type, row) {
                             if (data['user_answer'][0]) {
-                                return "<textarea cols='50'data-guid='" + data['guid'] + "'>" +
-                                    data['user_answer'][0]['answer'] + "</textarea>"
+                                if (data['user_answer'][0]['answer'] == null) {
+                                    return "<textarea cols='50'data-guid='" + data[
+                                            'guid'] +
+                                        "'></textarea>"
+                                } else {
+                                    return "<textarea cols='50'data-guid='" + data[
+                                            'guid'] + "'>" +
+                                        data['user_answer'][0]['answer'] + "</textarea>"
+                                }
+
                             } else {
-                                return "<textarea cols='50'data-guid='" + data['guid'] +
+                                return "<textarea cols='50'data-guid='" + data[
+                                        'guid'] +
                                     "'></textarea>"
                             }
 
@@ -170,6 +179,9 @@
                 },
             }), $("div.head-label").html('<h5 class="card-title mb-0">Quiz Question</h5>');
 
+            $('table').on('paste', 'textarea', function(e) {
+                e.preventDefault();
+            });
 
             $('table').on('change', 'textarea', function() {
                 var questionId = $(this).data('guid');
@@ -181,7 +193,8 @@
                     data: {
                         question_guid: questionId,
                         answer: answer,
-                        user_id: "{{ $id }}"
+                        user_id: "{{ $id }}",
+                        topic_guid: "{{ $guid }}"
                     },
                     beforeSend: function(request) {
                         request.setRequestHeader("Authorization",
@@ -189,7 +202,10 @@
 
                     },
                     success: function(result) {
-
+                        if (!result['data']) {
+                            window.location.href =
+                                "{{ route('topic', ['code' => $code]) }}";
+                        }
                     },
                     error: function(xhr, status, error) {
                         var errorMessage = xhr.status + ': ' + xhr.statusText;

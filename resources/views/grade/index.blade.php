@@ -97,7 +97,10 @@
 
                 },
                 "columns": [{
-                        data: 'user_id',
+                        data: 'user',
+                        render: function(data, type, full, meta) {
+                            return data['id'];
+                        }
                     },
                     {
                         data: 'user',

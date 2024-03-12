@@ -58,6 +58,13 @@
                                 <input type="file" class="form-control" id="pdfInput" name="pdfInput" accept=".pdf">
                                 <button type="button" class="btn btn-danger mt-2" id="cancelPdf">Cancel</button>
                             </div>
+                            <div class="mb-3">
+                                <label for="language" class="form-label">Language</label>
+                                <select class="form-select" aria-label="Default select example" id="language">
+                                    <option value="english" selected>English</option>
+                                    <option value="indonesia" selected>Indonesia</option>
+                                </select>
+                            </div>
 
                             <div class="mb-3">
                                 <label for="courseInput" class="form-label">Course</label>
@@ -122,9 +129,6 @@
                 $('#generateQuestionModal').modal('show');
             });
 
-            function deleteRow() {
-                $(this).closest('tr').remove(); // Menghapus baris yang berisi tombol yang ditekan
-            }
 
             // Tambahkan event listener untuk tombol delete di luar event handler form
             $(document).on('click', '.delete-btn', deleteRow);
@@ -190,6 +194,7 @@
                 event.preventDefault();
 
                 var question = $('#questionInput').val();
+                var language = $('#language').val();
                 var pdfFile = $('#pdfInput')[0].files[0];
                 if (!question && !pdfFile) {
                     alert('Please insert noun or upload PDF.');
@@ -197,6 +202,7 @@
                 }
                 var formData = new FormData();
                 formData.append('pdf', pdfFile);
+                formData.append('language', language);
                 if (pdfFile) {
                     $.ajax({
                         type: "POST",
@@ -215,9 +221,10 @@
                                 "dom": "lrt",
                                 "bFilter": false,
                                 "searching": false,
+                                "keys": true,
                                 "destroy": true,
                                 "processing": true,
-                                "serverSide": true,
+                                "serverSide": false,
                                 "ajax": {
                                     type: "GET",
                                     url: "{{ env('URL_API') }}/api/v1/question/generate",
@@ -346,9 +353,10 @@
                         "dom": "lrt",
                         "bFilter": false,
                         "searching": false,
+                        "keys": true,
                         "destroy": true,
                         "processing": true,
-                        "serverSide": true,
+                        "serverSide": false,
                         "ajax": {
                             type: "GET",
                             url: "{{ env('URL_API') }}/api/v1/question/generate",
@@ -358,6 +366,7 @@
                             },
                             data: {
                                 "noun": question,
+                                "language": language
                             },
 
 
@@ -460,8 +469,33 @@
                     }), $("div.head-label").html(
                         '<h5 class="card-title mb-0">Generate Question</h5>');
                 }
+                $('#table-data').on('blur', 'tbody td div.text-wrap[contenteditable]', function() {
+                    var table = $('#table-data').DataTable();
+                    var cell = table.cell($(this).closest('td'));
+                    var newValue = $(this).text();
+                    cell.data(newValue).draw();
+                });
+
+
             });
 
+            function deleteRow() {
+                var table = $('#table-data').DataTable();
+                var row = $(this).closest('tr');
+                table.row(row).remove().draw();
+                updateRowIndex();
+            };
+
+            function updateRowIndex() {
+                var table = $('#table-data').DataTable();
+                table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                    var rowData = this.data();
+                    rowData['DT_RowIndex'] = rowIdx +
+                        1;
+                    this.data(rowData);
+                });
+                table.draw();
+            }
 
             function saveData() {
                 {

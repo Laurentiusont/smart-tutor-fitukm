@@ -40,4 +40,17 @@ class UserController extends Controller
         $data = json_decode($response, true);
         return view('user.edit', compact('token', 'session', 'data'));
     }
+    public function profile()
+    {
+        $session = new Session();
+        $token = $session->get('access_token');
+        $id = $session->get('id');
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer " . $token,
+            'Content-Type' => "application/json"
+        ])->get(env("URL_API", "http://example.com") . '/api/v1/user/' . $id);
+
+        $data = json_decode($response, true);
+        return view('profile.index', compact('token', 'session', 'id', 'data'));
+    }
 }

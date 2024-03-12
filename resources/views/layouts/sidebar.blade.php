@@ -16,12 +16,12 @@
                     <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('dashboard') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <img src="{{ asset('assets/img/icon-dashboard.png') }}" width="11px" height="11px"
+                            <img src="{{ asset('assets/img/quiz.png') }}" width="11px" height="11px"
                                 viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink">
                             <title>shop</title>
                         </div>
-                        <p class="m-1 textSidebar">Dashboard</p>
+                        <p class="m-1 textSidebar">Quiz</p>
                     </a>
                 </li>
                 <li class="TextSidebar mt-2">
@@ -29,7 +29,20 @@
                         Feature
                     </h6>
                 </li>
-                @isRole(['admin', 'lecturer', 'assistant'])
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('user/profile') ? 'active' : '' }}"
+                        href="{{ url('user/profile') }}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <img src="{{ asset('assets/img/avatar.png') }}" width="14px" height="14px"
+                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <title>shop </title>
+                        </div>
+                        <p class="m-1 textSidebar">User Profile</p>
+                    </a>
+                </li>
+                @isRole(['admin', 'lecturer'])
                     <li class="nav-item">
                         <a class="nav-link {{ Request::is('user') ? 'active' : '' }}" href="{{ url('user') }}">
                             <div

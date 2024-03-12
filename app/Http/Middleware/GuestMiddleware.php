@@ -23,7 +23,7 @@ class GuestMiddleware
         if (!isset($token)) {
             return $next($request);
         } else {
-            return redirect('home');
+            return redirect('dashboard');
         }
     }
 }
