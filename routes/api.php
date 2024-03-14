@@ -142,6 +142,7 @@ Route::group([
     $router->get('/', [TopicController::class, 'showData']);
     $router->put('/', [TopicController::class, 'updateData']);
     $router->get('/{guid}', [TopicController::class, 'getData']);
+    $router->get('/deadline/{guid}', [TopicController::class, 'checkDeadline']);
     $router->delete('/{guid}', [TopicController::class, 'deleteData']);
     $router->post('/', [TopicController::class, 'insertData']);
     $router->post('/filter/course', [TopicController::class, 'topicByCourse']);

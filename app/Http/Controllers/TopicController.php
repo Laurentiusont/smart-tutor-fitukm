@@ -44,6 +44,15 @@ class TopicController extends Controller
         if (!isset($data)) {
             return ResponseController::getResponse(null, 400, "Data not found");
         }
+        $currentDateTime = Carbon::now('Asia/Jakarta');
+        foreach ($data as $topic) {
+            if ($topic->time_end < $currentDateTime) {
+                $topic->deadline = false;
+            } else {
+                $topic->deadline = true;
+            }
+        }
+
         $dataTable = DataTables::of($data)
             ->addIndexColumn()
             ->make(true);
@@ -107,13 +116,18 @@ class TopicController extends Controller
 
         return ResponseController::getResponse($response, 200, 'Success');
     }
-    public function getData($guid)
+    public function checkDeadline($guid)
     {
         $data = Topic::where('guid', '=', $guid)->first();
         $currentDateTime = Carbon::now('Asia/Jakarta');
         if ($data->time_end < $currentDateTime) {
             $data = false;
         }
+        return ResponseController::getResponse($data, 200, 'Success');
+    }
+    public function getData($guid)
+    {
+        $data = Topic::where('guid', '=', $guid)->first();
         return ResponseController::getResponse($data, 200, 'Success');
     }
     public function updateData(Request $request)
