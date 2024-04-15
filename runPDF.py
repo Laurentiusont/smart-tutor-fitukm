@@ -111,7 +111,7 @@ def main(file, language, page):
 
                 Dari masing-masing kategori di atas, buat 2 pertanyaan understanding dan 2 pertanyaan remembering SEHINGGA TOTAL SELURUH PERTANYAAN ADALAH 4 SOAL !!. JANGAN bertanya tentang sejarah yang hanya menyangkut waktu dan juga JANGAN MENGGUNAKAN TEMPLATE PERTANYAAN YANG SAMA LEBIH DARI 2X, tetapi Perluas/Perdalam materi berdasarkan kata-kata kunci yang dimasukkan pengguna.
 
-                hasilkan respons dalam format JSON.  FORMAT RESPON HARUS SEPERTI INI !!! :
+                FORMAT RESPONSE HARUS DALAM BENTUK JSON yang dapat di DECODE !!!  BERIKUT MERUPAKAN CONTOHNYA !!! :
 
                     [
                         {
