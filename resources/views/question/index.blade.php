@@ -30,6 +30,8 @@
                                 <th class="text-center">Question Fix</th>
                                 <th class="text-center">Answer Fix</th>
                                 <th class="text-center">Category</th>
+                                <th class="text-center">Page</th>
+                                <th class="text-center">Cossine Similarity</th>
                                 <th class="text-center">Weight</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -140,7 +142,7 @@
                                         <div class="mb-3">
                                             <label for="edit-weight" class="form-label">Weight</label>
                                             <input type="number" class="form-control" id="edit-weight"
-                                                name="edit-weight" min="0" max="100">
+                                                name="edit-weight" min="0" max="100" step="0.001">
                                             <div id="edit-weight-warning" class="text-danger"></div>
                                         </div>
                                         <div class="mb-3">
@@ -235,6 +237,26 @@
                         }
                     },
                     {
+                        data: 'page',
+                        render: function(data, type, row) {
+                            if (data) {
+                                return "<div class='text-wrap'>" + data + "</div>";
+                            } else {
+                                return "<div class='text-wrap'>-</div>";
+                            }
+                        }
+                    },
+                    {
+                        data: 'cossine_similarity',
+                        render: function(data, type, row) {
+                            if (data) {
+                                return "<div class='text-wrap'>" + data + "</div>";
+                            } else {
+                                return "<div class='text-wrap'>-</div>";
+                            }
+                        }
+                    },
+                    {
                         data: 'weight',
                         render: function(data, type, row) {
                             return "<div class='text-wrap'>" + data + "</div>"
@@ -276,7 +298,10 @@
                 },
                 dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
                 displayLength: 10,
-                lengthMenu: [7, 10, 25, 50],
+                lengthMenu: [
+                    [7, 10, 25, 50, -1],
+                    [7, 10, 25, 50, "All"]
+                ],
                 buttons: [{
                     text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Question</span>',
                     className: "create-new btn btn-primary",

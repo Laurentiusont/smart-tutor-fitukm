@@ -43,6 +43,8 @@
                                 <th>Question</th>
                                 <th>Answer</th>
                                 <th>Category</th>
+                                <th>Page</th>
+                                <th>Cossine Similarity</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -89,6 +91,10 @@
                                     <option value="" selected>Choose Topic</option>
                                 </select>
                             </div>
+                            <div class="mb-3 form-check" id="skipButton">
+                                <input type="checkbox" class="form-check-input" id="skipPagesCheckbox">
+                                <label class="form-check-label" for="skipPagesCheckbox">Skip Unprocessable Pages</label>
+                            </div>
                             <!-- Add other input fields as needed -->
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
@@ -116,16 +122,20 @@
     <script type="text/javascript">
         $('#table-container').hide();
         $('#topic').hide();
+
         $('#cancelPdf').click(function() {
             $('#pdfInput').val('');
             $('#text').show();
         });
+
         $('#questionInput').on('input', function() {
             if ($(this).val() !== '') {
                 $('#pdf').hide();
+                $('#skipButton').hide();
                 $('#text').show();
             } else {
                 $('#pdf').show();
+                $('#skipButton').show();
             }
         });
 
@@ -199,6 +209,8 @@
                 });
 
             });
+
+
             $('#generateQuestionForm').submit(function(event) {
                 $('#generateQuestionModal').modal(
                     'hide');
@@ -214,7 +226,10 @@
                 var formData = new FormData();
                 formData.append('pdf', pdfFile);
                 formData.append('language', language);
+
+                // generate use pdf
                 if (pdfFile) {
+                    var isChecked = $('#skipPagesCheckbox').is(':checked');
                     $('#loading').show();
                     $.ajax({
                         type: "POST",
@@ -243,6 +258,225 @@
 
                             }
 
+
+                            function makeDatatable(response, cossineSimilarity, questionTotal) {
+                                $('#loading').hide();
+                                $('#table-container').show();
+                                cossineSimilarity = cossineSimilarity / questionTotal;
+                                $('#table-data').DataTable({
+                                    "dom": "lrt",
+                                    "bFilter": false,
+                                    "searching": false,
+                                    "keys": true,
+                                    "destroy": true,
+                                    "processing": true,
+                                    "serverSide": false,
+                                    "ajax": {
+                                        "url": "{{ env('URL_API') }}/api/v1/question/convert/datatable",
+                                        "type": "POST",
+                                        'beforeSend': function(
+                                            request) {
+                                            request
+                                                .setRequestHeader(
+                                                    "Authorization",
+                                                    "Bearer {{ $token }}"
+                                                );
+                                        },
+                                        "data": {
+                                            "data": allResponses,
+                                            "path": path,
+                                            "name": name,
+                                        },
+                                    },
+                                    "columns": [{
+                                            data: 'DT_RowIndex',
+                                            orderable: false,
+                                            searchable: false
+                                        },
+                                        {
+                                            data: 'question',
+                                            render: function(
+                                                data,
+                                                type,
+                                                row
+                                            ) {
+                                                return "<div class='text-wrap' contenteditable style='text-align: justify;'>" +
+                                                    data +
+                                                    "</div>"
+                                            }
+                                        },
+                                        {
+                                            data: 'answer',
+                                            render: function(
+                                                data,
+                                                type,
+                                                row
+                                            ) {
+                                                return "<div class='text-wrap' contenteditable style='text-align: justify;'>" +
+                                                    data +
+                                                    "</div>"
+                                            }
+                                        },
+                                        {
+                                            data: 'category',
+                                            render: function(
+                                                data,
+                                                type,
+                                                row
+                                            ) {
+                                                return "<div class='text-wrap' contenteditable>" +
+                                                    data +
+                                                    "</div>"
+                                            }
+                                        },
+                                        {
+                                            data: 'page',
+                                            render: function(data, type, row) {
+                                                if (data) {
+                                                    return "<div class='text-wrap' contenteditable>" +
+                                                        data + "</div>";
+                                                } else {
+                                                    return "<div class='text-wrap'>-</div>";
+                                                }
+                                            }
+                                        },
+                                        {
+                                            data: 'cossine_similarity',
+                                            render: function(
+                                                data,
+                                                type,
+                                                row
+                                            ) {
+                                                return "<div class='text-wrap' contenteditable>" +
+                                                    data +
+                                                    "</div>"
+                                            }
+                                        },
+                                        {
+                                            data: null,
+                                            title: "Actions",
+                                            render: function(
+                                                data,
+                                                type,
+                                                row
+                                            ) {
+                                                return '<a role="button" id="delete" class="delete-btn" style="text-decoration: none;"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
+                                            },
+                                            "orderable": false,
+                                            "searchable": false
+
+                                        },
+                                    ],
+                                    "language": {
+                                        "emptyTable": "No data available in table",
+                                        "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                                        "infoEmpty": "Showing 0 to 0 of 0 entries",
+                                        "lengthMenu": "Show _MENU_ entries",
+                                        "loadingRecords": "Loading...",
+                                        "processing": "Processing...",
+                                        "zeroRecords": "No matching records found",
+                                        "paginate": {
+                                            "first": "<i class='fa-solid fa-angle-double-left'></i>",
+                                            "last": "<i class='fa-solid fa-angle-double-right'></i>",
+                                            "next": "<i class='fa-solid fa-angle-right'></i>",
+                                            "previous": "<i class='fa-solid fa-angle-left'></i>"
+                                        },
+                                        "aria": {
+                                            "sortAscending": ": activate to sort column ascending",
+                                            "sortDescending": ": activate to sort column descending"
+                                        }
+                                    },
+                                    dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+                                    displayLength: 10,
+                                    lengthMenu: [7, 10, 25,
+                                        50
+                                    ],
+                                    buttons: [{
+                                        text: '<span class="d-none d-sm-inline-block" id="save-btn">Save</span>',
+                                        className: "create-new btn btn-success",
+                                        action: function(
+                                            e,
+                                            dt,
+                                            node,
+                                            config
+                                        ) {
+                                            saveData
+                                                ();
+                                        }
+                                    }],
+                                    responsive: {
+                                        details: {
+                                            display: $.fn
+                                                .dataTable
+                                                .Responsive
+                                                .display
+                                                .modal({
+                                                    header: function(
+                                                        e
+                                                    ) {
+                                                        return "Details of " +
+                                                            e
+                                                            .data()
+                                                            .full_name
+                                                    }
+                                                }),
+                                            type: "column",
+                                            renderer: function(
+                                                e, t, a
+                                            ) {
+                                                a = $
+                                                    .map(
+                                                        a,
+                                                        function(
+                                                            e,
+                                                            t
+                                                        ) {
+                                                            return "" !==
+                                                                e
+                                                                .title ?
+                                                                '<tr data-dt-row="' +
+                                                                e
+                                                                .rowIndex +
+                                                                '" data-dt-column="' +
+                                                                e
+                                                                .columnIndex +
+                                                                '"><td>' +
+                                                                e
+                                                                .title +
+                                                                ":</td> <td>" +
+                                                                e
+                                                                .data +
+                                                                "</td></tr>" :
+                                                                ""
+                                                        }
+                                                    )
+                                                    .join(
+                                                        ""
+                                                    );
+                                                return !
+                                                    !
+                                                    a &&
+                                                    $(
+                                                        '<table class="table"/><tbody />'
+                                                    )
+                                                    .append(
+                                                        a
+                                                    )
+                                            }
+                                        }
+                                    },
+
+                                }), $("div.head-label").html(
+                                    '<h5 class="card-title mb-0">Generate Question - Average Cosine Similarity: ' +
+                                    cossineSimilarity.toFixed(2) + '</h5>');
+
+                            }
+
+                            let error = 0;
+                            var errorPages = [];
+                            let cossineSimilarity = 0;
+                            let questionTotal = 0;
+
                             function makeAjaxRequest(i) {
                                 $.ajax({
                                     type: "GET",
@@ -258,219 +492,191 @@
                                         "page": i
                                     },
                                     success: function(response) {
-                                        if (response) {
-                                            allResponses.push(...response);
-                                            completedRequests++;
-                                            processedPages++;
-                                            updateProgressBar();
-                                            console.log(response);
-                                            // console.log(allResponses);
-                                            if (completedRequests === page) {
-                                                $('#loading').hide();
-                                                $('#table-container').show();
-                                                $('#table-data').DataTable({
-                                                    "dom": "lrt",
-                                                    "bFilter": false,
-                                                    "searching": false,
-                                                    "keys": true,
-                                                    "destroy": true,
-                                                    "processing": true,
-                                                    "serverSide": false,
-                                                    "ajax": {
-                                                        "url": "{{ env('URL_API') }}/api/v1/question/convert/datatable",
-                                                        "type": "POST",
-                                                        'beforeSend': function(
-                                                            request) {
-                                                            request
-                                                                .setRequestHeader(
-                                                                    "Authorization",
-                                                                    "Bearer {{ $token }}"
+                                        if (response && Array.isArray(response)) {
+                                            var allRequestsCompleted =
+                                                false; // Menandakan apakah semua permintaan telah selesai
+                                            let index = 0;
+                                            response.forEach(function(item) {
+                                                item.page = i + 1;
+
+                                                // cossine similarity
+                                                $.ajax({
+                                                    type: "GET",
+                                                    url: "{{ env('URL_API') }}/api/v1/question/check-cossine",
+                                                    beforeSend: function(
+                                                        request
+                                                    ) {
+                                                        request
+                                                            .setRequestHeader(
+                                                                "Authorization",
+                                                                "Bearer {{ $token }}"
+                                                            );
+                                                    },
+                                                    data: {
+                                                        "question": item
+                                                            .question,
+                                                        "answer": item
+                                                            .answer
+                                                    },
+                                                    success: function(
+                                                        response
+                                                    ) {
+                                                        item.cossine_similarity =
+                                                            response;
+                                                        cossineSimilarity
+                                                            +=
+                                                            parseFloat(
+                                                                response
+                                                            );
+                                                        questionTotal
+                                                            +=
+                                                            1;
+                                                        index =
+                                                            index +
+                                                            1
+                                                        if (index ===
+                                                            response
+                                                            .length -
+                                                            1) {
+                                                            // Jika ini adalah permintaan terakhir, tandai bahwa semua permintaan telah selesai
+                                                            allRequestsCompleted
+                                                                =
+                                                                true;
+                                                        }
+                                                    },
+                                                    error: function(
+                                                        xhr,
+                                                        status,
+                                                        error
+                                                    ) {}
+                                                });
+
+                                                allResponses.push(item);
+                                            });
+
+                                            // Setelah forEach, tunggu semua permintaan selesai sebelum menambahkan completedRequests
+                                            var checkCompletionInterval =
+                                                setInterval(function() {
+                                                        if (allRequestsCompleted) {
+                                                            clearInterval(
+                                                                checkCompletionInterval
+                                                            ); // Hentikan pengecekan interval
+                                                            completedRequests++; // Tambahkan completedRequests setelah semua permintaan selesai
+                                                            processedPages++;
+                                                            updateProgressBar();
+                                                            console
+                                                                .log(
+                                                                    response
                                                                 );
-                                                        },
-                                                        "data": {
-                                                            "data": allResponses,
-                                                            "path": path,
-                                                            "name": name,
-                                                        },
-                                                    },
-                                                    "columns": [{
-                                                            data: 'DT_RowIndex',
-                                                            orderable: false,
-                                                            searchable: false
-                                                        },
-                                                        {
-                                                            data: 'question',
-                                                            render: function(
-                                                                data,
-                                                                type,
-                                                                row
-                                                            ) {
-                                                                return "<div class='text-wrap' contenteditable style='text-align: justify;'>" +
-                                                                    data +
-                                                                    "</div>"
-                                                            }
-                                                        },
-                                                        {
-                                                            data: 'answer',
-                                                            render: function(
-                                                                data,
-                                                                type,
-                                                                row
-                                                            ) {
-                                                                return "<div class='text-wrap' contenteditable style='text-align: justify;'>" +
-                                                                    data +
-                                                                    "</div>"
-                                                            }
-                                                        },
-                                                        {
-                                                            data: 'category',
-                                                            render: function(
-                                                                data,
-                                                                type,
-                                                                row
-                                                            ) {
-                                                                return "<div class='text-wrap' contenteditable>" +
-                                                                    data +
-                                                                    "</div>"
-                                                            }
-                                                        },
-                                                        {
-                                                            data: null,
-                                                            title: "Actions",
-                                                            render: function(
-                                                                data,
-                                                                type,
-                                                                row
-                                                            ) {
-                                                                return '<a role="button" id="delete" class="delete-btn" style="text-decoration: none;"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
-                                                            },
-                                                            "orderable": false,
-                                                            "searchable": false
 
-                                                        },
-                                                    ],
-                                                    "language": {
-                                                        "emptyTable": "No data available in table",
-                                                        "info": "Showing _START_ to _END_ of _TOTAL_ entries",
-                                                        "infoEmpty": "Showing 0 to 0 of 0 entries",
-                                                        "lengthMenu": "Show _MENU_ entries",
-                                                        "loadingRecords": "Loading...",
-                                                        "processing": "Processing...",
-                                                        "zeroRecords": "No matching records found",
-                                                        "paginate": {
-                                                            "first": "<i class='fa-solid fa-angle-double-left'></i>",
-                                                            "last": "<i class='fa-solid fa-angle-double-right'></i>",
-                                                            "next": "<i class='fa-solid fa-angle-right'></i>",
-                                                            "previous": "<i class='fa-solid fa-angle-left'></i>"
-                                                        },
-                                                        "aria": {
-                                                            "sortAscending": ": activate to sort column ascending",
-                                                            "sortDescending": ": activate to sort column descending"
-                                                        }
-                                                    },
-                                                    dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
-                                                    displayLength: 10,
-                                                    lengthMenu: [7, 10, 25,
-                                                        50
-                                                    ],
-                                                    buttons: [{
-                                                        text: '<span class="d-none d-sm-inline-block" id="save-btn">Save</span>',
-                                                        className: "create-new btn btn-success",
-                                                        action: function(
-                                                            e,
-                                                            dt,
-                                                            node,
-                                                            config
-                                                        ) {
-                                                            saveData
-                                                                ();
-                                                        }
-                                                    }],
-                                                    responsive: {
-                                                        details: {
-                                                            display: $.fn
-                                                                .dataTable
-                                                                .Responsive
-                                                                .display
-                                                                .modal({
-                                                                    header: function(
-                                                                        e
-                                                                    ) {
-                                                                        return "Details of " +
-                                                                            e
-                                                                            .data()
-                                                                            .full_name
-                                                                    }
-                                                                }),
-                                                            type: "column",
-                                                            renderer: function(
-                                                                e, t, a
-                                                            ) {
-                                                                a = $
-                                                                    .map(
-                                                                        a,
-                                                                        function(
-                                                                            e,
-                                                                            t
-                                                                        ) {
-                                                                            return "" !==
-                                                                                e
-                                                                                .title ?
-                                                                                '<tr data-dt-row="' +
-                                                                                e
-                                                                                .rowIndex +
-                                                                                '" data-dt-column="' +
-                                                                                e
-                                                                                .columnIndex +
-                                                                                '"><td>' +
-                                                                                e
-                                                                                .title +
-                                                                                ":</td> <td>" +
-                                                                                e
-                                                                                .data +
-                                                                                "</td></tr>" :
-                                                                                ""
-                                                                        }
-                                                                    )
-                                                                    .join(
-                                                                        ""
+                                                            if (completedRequests ===
+                                                                page) {
+                                                                makeDatatable(
+                                                                    allResponses,
+                                                                    cossineSimilarity,
+                                                                    questionTotal
+                                                                );
+                                                                if (errorPages
+                                                                    .length > 0) {
+                                                                    alert("Pertanyaan berhasil digenerate. Halaman yang mengalami kesalahan: " +
+                                                                        errorPages
+                                                                        .join(
+                                                                            ", "
+                                                                        ));
+                                                                } else {
+                                                                    alert(
+                                                                        "Pertanyaan berhasil digenerate tanpa ada halaman yang mengalami kesalahan."
                                                                     );
-                                                                return !
-                                                                    !
-                                                                    a &&
-                                                                    $(
-                                                                        '<table class="table"/><tbody />'
-                                                                    )
-                                                                    .append(
-                                                                        a
-                                                                    )
+                                                                }
+                                                            } else {
+                                                                makeAjaxRequest(i +
+                                                                    1);
                                                             }
                                                         }
                                                     },
+                                                    100
+                                                ); // Cek setiap 100 milidetik apakah semua permintaan telah selesai
 
-                                                }), $("div.head-label").html(
-                                                    '<h5 class="card-title mb-0">Generate Question</h5>'
-                                                );
 
-                                            } else {
-                                                makeAjaxRequest(i + 1);
-                                            }
                                         } else {
-                                            makeAjaxRequest(i);
+                                            console.log(response);
+                                            error += 1;
+                                            if (error > 1) {
+                                                error = 0;
+                                                if (!isChecked) {
+                                                    var proceed = confirm(
+                                                        'Terjadi kesalahan saat memproses halaman ' +
+                                                        i + 1 +
+                                                        '. Apakah Anda ingin melewati halaman ?'
+                                                    );
+                                                    if (!proceed) {
+                                                        makeDatatable(allResponses,
+                                                            cossineSimilarity,
+                                                            questionTotal);
+                                                        if (errorPages.length > 0) {
+                                                            alert("Pertanyaan berhasil digenerate. Halaman yang mengalami kesalahan: " +
+                                                                errorPages.join(
+                                                                    ", "));
+                                                        } else {
+                                                            alert(
+                                                                "Pertanyaan berhasil digenerate tanpa ada halaman yang mengalami kesalahan."
+                                                            );
+                                                        }
+                                                        return
+                                                    }
+                                                }
+
+                                                completedRequests++;
+                                                processedPages++;
+                                                updateProgressBar();
+                                                errorPages.push(i);
+                                                console.log(errorPages);
+                                                makeAjaxRequest(i + 1);
+                                            } else {
+                                                makeAjaxRequest(i);
+                                            }
                                         }
 
                                     },
                                     error: function(xhr, status, error) {
-                                        console.log("Error:", error);
-                                        alert(
-                                            'Terjadi kesalahan saat memproses data. Silakan coba lagi.'
-                                        );
+                                        if (error > 1) {
+                                            error = 0;
+                                            if (!isChecked) {
+                                                var proceed = confirm(
+                                                    'Terjadi kesalahan saat memproses halaman ' +
+                                                    (i + 1) +
+                                                    '. Apakah Anda ingin melewati halaman ?'
+                                                );
+                                                if (!proceed) {
+                                                    makeDatatable(allResponses,
+                                                        cossineSimilarity,
+                                                        questionTotal);
+                                                    if (errorPages.length > 0) {
+                                                        alert("Pertanyaan berhasil digenerate. Halaman yang mengalami kesalahan: " +
+                                                            errorPages.join(
+                                                                ", "));
+                                                    } else {
+                                                        alert(
+                                                            "Pertanyaan berhasil digenerate tanpa ada halaman yang mengalami kesalahan."
+                                                        );
+                                                    }
+                                                    return
+                                                }
+                                            }
+
+                                            completedRequests++;
+                                            processedPages++;
+                                            updateProgressBar();
+                                            errorPages.push(i);
+                                            console.log(errorPages);
+                                            makeAjaxRequest(i + 1);
+                                        } else {
+                                            makeAjaxRequest(i);
+                                        }
                                     }
                                 });
                             }
                             makeAjaxRequest(0);
-                            // console.log(allResponses);
-
                         },
                         error: function(xhr, status, error) {
                             console.error(xhr.responseText);
@@ -484,126 +690,220 @@
                         }
                     });
                 } else {
-                    $('#table-container').show();
-                    $('#table-data').DataTable({
-                        "dom": "lrt",
-                        "bFilter": false,
-                        "searching": false,
-                        "keys": true,
-                        "destroy": true,
-                        "processing": true,
-                        "serverSide": false,
-                        "ajax": {
-                            type: "GET",
-                            url: "{{ env('URL_API') }}/api/v1/question/generate",
-                            beforeSend: function(request) {
-                                request.setRequestHeader("Authorization",
-                                    "Bearer {{ $token }}");
-                            },
-                            data: {
-                                "noun": question,
-                                "language": language
-                            },
-
-
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ env('URL_API') }}/api/v1/question/generate",
+                        beforeSend: function(request) {
+                            request.setRequestHeader("Authorization",
+                                "Bearer {{ $token }}");
                         },
-                        "columns": [{
-                                data: 'DT_RowIndex',
-                                orderable: false,
-                                searchable: false
-                            }, {
-                                data: 'question',
-                                render: function(data, type, row) {
-                                    return "<div class='text-wrap' style='text-align: justify;'>" +
-                                        data + "</div>"
-                                }
-                            },
-                            {
-                                data: 'answer',
-                                render: function(data, type, row) {
-                                    return "<div class='text-wrap' style='text-align: justify;'>" +
-                                        data + "</div>"
-                                }
-                            },
-                            {
-                                data: 'category',
-                                render: function(data, type, row) {
-                                    return "<div class='text-wrap' contenteditable>" +
-                                        data +
-                                        "</div>"
-                                }
-                            },
-                            {
-                                data: null,
-                                title: "Actions",
-                                render: function(data, type, row) {
-                                    return '<a role="button" id="delete" class="delete-btn" style="text-decoration: none;"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
-                                },
-                                "orderable": false,
-                                "searchable": false
-
-                            },
-                        ],
-                        "language": {
-                            "emptyTable": "No data available in table",
-                            "info": "Showing _START_ to _END_ of _TOTAL_ entries",
-                            "infoEmpty": "Showing 0 to 0 of 0 entries",
-                            "lengthMenu": "Show _MENU_ entries",
-                            "loadingRecords": "Loading...",
-                            "processing": "Processing...",
-                            "zeroRecords": "No matching records found",
-                            "paginate": {
-                                "first": "<i class='fa-solid fa-angle-double-left'></i>",
-                                "last": "<i class='fa-solid fa-angle-double-right'></i>",
-                                "next": "<i class='fa-solid fa-angle-right'></i>",
-                                "previous": "<i class='fa-solid fa-angle-left'></i>"
-                            },
-                            "aria": {
-                                "sortAscending": ": activate to sort column ascending",
-                                "sortDescending": ": activate to sort column descending"
-                            }
+                        data: {
+                            "noun": question,
+                            "language": language
                         },
-                        dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
-                        displayLength: 10,
-                        lengthMenu: [7, 10, 25, 50],
-                        buttons: [{
-                            text: '<span class="d-none d-sm-inline-block" id="save-btn">Save</span>',
-                            className: "create-new btn btn-success",
-                            action: function(e, dt, node, config) {
-                                saveData();
-                            }
-
-                        }],
-                        responsive: {
-                            details: {
-                                display: $.fn.dataTable.Responsive.display
-                                    .modal({
-                                        header: function(e) {
-                                            return "Details of " + e
-                                                .data().full_name
+                        success: function(response) {
+                            var data = response['data'];
+                            var promises = [];
+                            let cossineSimilarity = 0;
+                            let questionTotal = 0;
+                            data.forEach(function(row) {
+                                var promise = new Promise(function(resolve, reject) {
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "{{ env('URL_API') }}/api/v1/question/check-cossine",
+                                        beforeSend: function(request) {
+                                            request
+                                                .setRequestHeader(
+                                                    "Authorization",
+                                                    "Bearer {{ $token }}"
+                                                );
+                                        },
+                                        data: {
+                                            "question": row.question,
+                                            "answer": row.answer
+                                        },
+                                        success: function(similarity) {
+                                            row.cossine_similarity =
+                                                similarity;
+                                            cossineSimilarity
+                                                +=
+                                                parseFloat(
+                                                    similarity
+                                                );
+                                            questionTotal
+                                                +=
+                                                1;
+                                            resolve
+                                                ();
+                                        },
+                                        error: function(xhr, status,
+                                            error) {
+                                            console.error("Error:",
+                                                error);
+                                            reject(
+                                                error
+                                            );
                                         }
-                                    }),
-                                type: "column",
-                                renderer: function(e, t, a) {
-                                    a = $.map(a, function(e, t) {
-                                        return "" !== e.title ?
-                                            '<tr data-dt-row="' + e
-                                            .rowIndex +
-                                            '" data-dt-column="' + e
-                                            .columnIndex +
-                                            '"><td>' + e.title +
-                                            ":</td> <td>" + e.data +
-                                            "</td></tr>" : ""
-                                    }).join("");
-                                    return !!a && $(
-                                        '<table class="table"/><tbody />'
-                                    ).append(a)
-                                }
-                            }
-                        },
+                                    });
+                                });
+                                promises.push(promise);
+                            });
 
-                    }), $("div.head-label").html(
-                        '<h5 class="card-title mb-0">Generate Question</h5>');
+                            // Menjalankan semua promises
+                            Promise.all(promises)
+                                .then(function() {
+                                    $('#table-container').show();
+                                    cossineSimilarity = cossineSimilarity / questionTotal;
+                                    $('#table-data').DataTable({
+                                        "dom": "lrt",
+                                        "bFilter": false,
+                                        "searching": false,
+                                        "keys": true,
+                                        "destroy": true,
+                                        "processing": true,
+                                        "serverSide": false,
+                                        "data": data,
+                                        "columns": [{
+                                                data: 'DT_RowIndex',
+                                                orderable: false,
+                                                searchable: false
+                                            }, {
+                                                data: 'question',
+                                                render: function(data, type,
+                                                    row) {
+                                                    return "<div class='text-wrap' style='text-align: justify;'>" +
+                                                        data + "</div>"
+                                                }
+                                            },
+                                            {
+                                                data: 'answer',
+                                                render: function(data, type,
+                                                    row) {
+                                                    return "<div class='text-wrap' style='text-align: justify;'>" +
+                                                        data + "</div>"
+                                                }
+                                            },
+                                            {
+                                                data: 'category',
+                                                render: function(data, type,
+                                                    row) {
+                                                    return "<div class='text-wrap' contenteditable>" +
+                                                        data +
+                                                        "</div>"
+                                                }
+                                            },
+                                            {
+                                                data: 'page',
+                                                render: function(data, type,
+                                                    row) {
+                                                    return "<div class='text-wrap'>-</div>";
+                                                }
+                                            },
+                                            {
+                                                data: 'cossine_similarity',
+                                                render: function(data, type,
+                                                    row) {
+                                                    return "<div class='text-wrap'>" +
+                                                        data +
+                                                        "</div>"
+                                                }
+                                            },
+                                            {
+                                                data: null,
+                                                title: "Actions",
+                                                render: function(data, type,
+                                                    row) {
+                                                    return '<a role="button" id="delete" class="delete-btn" style="text-decoration: none;"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
+                                                },
+                                                "orderable": false,
+                                                "searchable": false
+
+                                            },
+                                        ],
+                                        "language": {
+                                            "emptyTable": "No data available in table",
+                                            "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                                            "infoEmpty": "Showing 0 to 0 of 0 entries",
+                                            "lengthMenu": "Show _MENU_ entries",
+                                            "loadingRecords": "Loading...",
+                                            "processing": "Processing...",
+                                            "zeroRecords": "No matching records found",
+                                            "paginate": {
+                                                "first": "<i class='fa-solid fa-angle-double-left'></i>",
+                                                "last": "<i class='fa-solid fa-angle-double-right'></i>",
+                                                "next": "<i class='fa-solid fa-angle-right'></i>",
+                                                "previous": "<i class='fa-solid fa-angle-left'></i>"
+                                            },
+                                            "aria": {
+                                                "sortAscending": ": activate to sort column ascending",
+                                                "sortDescending": ": activate to sort column descending"
+                                            }
+                                        },
+                                        dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-3 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+                                        displayLength: 10,
+                                        lengthMenu: [7, 10, 25, 50],
+                                        buttons: [{
+                                            text: '<span class="d-none d-sm-inline-block" id="save-btn">Save</span>',
+                                            className: "create-new btn btn-success",
+                                            action: function(e, dt, node,
+                                                config) {
+                                                saveData();
+                                            }
+
+                                        }],
+                                        responsive: {
+                                            details: {
+                                                display: $.fn.dataTable.Responsive
+                                                    .display
+                                                    .modal({
+                                                        header: function(e) {
+                                                            return "Details of " +
+                                                                e
+                                                                .data()
+                                                                .full_name
+                                                        }
+                                                    }),
+                                                type: "column",
+                                                renderer: function(e, t, a) {
+                                                    a = $.map(a, function(e,
+                                                        t) {
+                                                        return "" !== e
+                                                            .title ?
+                                                            '<tr data-dt-row="' +
+                                                            e
+                                                            .rowIndex +
+                                                            '" data-dt-column="' +
+                                                            e
+                                                            .columnIndex +
+                                                            '"><td>' + e
+                                                            .title +
+                                                            ":</td> <td>" +
+                                                            e.data +
+                                                            "</td></tr>" :
+                                                            ""
+                                                    }).join("");
+                                                    return !!a && $(
+                                                        '<table class="table"/><tbody />'
+                                                    ).append(a)
+                                                }
+                                            }
+                                        },
+
+                                    }), $("div.head-label").html(
+                                        '<h5 class="card-title mb-0">Generate Question - Average Cosine Similarity: ' +
+                                        cossineSimilarity.toFixed(2) + '</h5>');
+
+                                })
+                                .catch(function(error) {
+                                    console.error("Error:", error);
+                                });
+
+
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error:", error);
+                        }
+                    });
                 }
                 $('#table-data').on('blur', 'tbody td div.text-wrap[contenteditable]', function() {
                     var table = $('#table-data').DataTable();
@@ -681,7 +981,12 @@
                                 'answer_fix': rowData.answer,
                                 'category': rowData.category,
                                 'weight': weight,
-                                'topic_guid': topic
+                                'topic_guid': topic,
+                                'page': rowData.page,
+                                'cossine_similarity': rowData.cossine_similarity,
+                                ...(rowData.page && rowData.page !== '-' ? {
+                                    'page': rowData.page
+                                } : {})
                             },
                             beforeSend: function(request) {
                                 request.setRequestHeader("Authorization",
@@ -713,7 +1018,6 @@
                             }
                         });
                     }
-
 
 
 
