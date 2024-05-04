@@ -24,10 +24,10 @@
                     <table class="table" id="table-data">
                         <thead>
                             <tr>
-                                <th class="text-center">Id</th>
-                                <th class="text-center">Name</th>
-                                <th class="text-center">Grade</th>
-                                <th class="text-center">Actions</th>
+                                <th >Id</th>
+                                <th >Name</th>
+                                <th >Grade</th>
+                                <th >Actions</th>
                             </tr>
                         </thead>
                     </table>
@@ -184,7 +184,7 @@
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
                             header: function(e) {
-                                return "Details of " + e.data().full_name
+                                return "Details of " + e.data().user.id
                             }
                         }),
                         type: "column",

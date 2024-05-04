@@ -27,6 +27,7 @@
         Smart Tutor
     </title>
     <!--     Fonts and icons     -->
+    <link rel="shortcut icon" href="{{ asset('assets/img/icons/flags/favicon.ico') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Nucleo Icons -->
     <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
@@ -41,6 +42,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- CSS Files -->
+<link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+
 
     <link id="pagestyle" href="{{ asset('assets/css/soft-ui-dashboard.css?v=1.0.3') }}" rel="stylesheet" />
     @yield('vendor-css')
@@ -53,6 +56,30 @@
     <!-- themify -->
     <link href="https://cdn.jsdelivr.net/npm/@icon/themify-icons@1.0.1-alpha.3/themify-icons.min.css" rel="stylesheet">
 </head>
+
+<style>
+    /* Tampilan responsif untuk tombol toggle */
+@media (max-width: 991.98px) {
+    .navbar-toggler-custom {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        padding: 0;
+    }
+
+    .navbar-toggler-custom:focus {
+        outline: none;
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3e%3cpath fill='none' d='M0 0h24v24H0z'/%3e%3cpath d='M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z' fill='%23fff'/%3e%3c/svg%3e") !important;
+        width: 24px;
+        height: 24px;
+    }
+}
+
+</style>
 
 <body class="g-sidenav-show  bg-gray-100 ">
     @include('layouts.sidebar')
@@ -84,6 +111,13 @@
             }
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
         }
+        
+    </script>
+    
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidenav-collapse-main').classList.toggle('show');
+        });
     </script>
 
     <!-- Github buttons -->

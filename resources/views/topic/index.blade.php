@@ -25,20 +25,20 @@
                         <thead>
                             <tr>
                                 @isRole(['admin', 'lecturer', 'assistant'], $code)
-                                    <th class="text-center">No</th>
-                                    <th class="text-center">Name</th>
-                                    <th class="text-center">Description</th>
-                                    <th class="text-center">Start Time</th>
-                                    <th class="text-center">End Time</th>
+                                    <th >No</th>
+                                    <th >Name</th>
+                                    <th >Description</th>
+                                    <th >Start Time</th>
+                                    <th >End Time</th>
                                 @else
-                                    <th class="text-center">No</th>
-                                    <th class="text-center">Name</th>
-                                    <th class="text-center">Description</th>
-                                    <th class="text-center">Start Time</th>
-                                    <th class="text-center">End Time</th>
-                                    <th class="text-center">Grade</th>
+                                    <th >No</th>
+                                    <th >Name</th>
+                                    <th >Description</th>
+                                    <th >Start Time</th>
+                                    <th >End Time</th>
+                                    <th >Grade</th>
                                 @endisRole
-                                <th class="text-center">Actions</th>
+                                <th >Actions</th>
                             </tr>
                         </thead>
                     </table>
@@ -255,17 +255,17 @@
                             return '<a href="/question/{{ $code }}/' + data['guid'] +
                                 '" role="button" class="edit-btn " style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;"></i></a>' +
                                 '<a href="/grade/{{ $code }}/' + data['guid'] +
-                                '" role="button" class="edit-btn " style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-percent" style="font-size: 15px; color: yellow;"></i></a>' +
+                                '" role="button" class="edit-btn " style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-percent" style="font-size: 15px; color: yellowgreen;"></i></a>' +
                                 '<a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"data-guid="' +
                                 data['guid'] +
-                                '"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
+                                '"><i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;"></i></a>' +
                                 '<a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="' +
                                 data['guid'] +
                                 '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
                             @else
                             if (data['grade'][0] == null && data['deadline']) {
                                 return '<a href="/user/answer/' + data['guid'] +
-                                    '" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-pencil-square-o" style="font-size: 15px; color: green;"></i></a>'
+                                    '" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;"></i></a>'
                             } else {
                                 return '<a href="/user/answer/result/' + data['guid'] +
                                     '" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;"><i class="fa-solid fa fa-eye" style="font-size: 15px; color: blue;"></i></a>';
@@ -302,7 +302,7 @@
                 lengthMenu: [7, 10, 25, 50],
                 buttons: [
                     @isRole(['admin', 'lecturer', 'assistant'], $code) {
-                        text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Topic</span>',
+                        text: '<i class="fa-solid fa-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Topic</span>',
                         className: "create-new btn btn-primary",
                         action: function(e, dt, node, config) {
                             $('#modalAdd').modal('show');
@@ -314,7 +314,7 @@
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
                             header: function(e) {
-                                return "Details of " + e.data().full_name
+                                return "Details of " + e.data().name
                             }
                         }),
                         type: "column",

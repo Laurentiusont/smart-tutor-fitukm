@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ asset('./assets/dashboard/datatables-buttons-bs5/buttons.bootstrap5.css') }}">
     <!-- Row Group CSS -->
     <link rel="stylesheet" href="{{ asset('./assets/dashboard/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}">
+    
 @endsection
 @section('info-page')
     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
@@ -24,13 +25,13 @@
                     <table class="table" id="table-data">
                         <thead>
                             <tr>
-                                <th class="text-center">No</th>
-                                <th class="text-center">Course</th>
-                                <th class="text-center">Topic</th>
-                                <th class="text-center">Start Time</th>
-                                <th class="text-center">End Time</th>
+                                <th>No</th>
+                                <th>Course</th>
+                                <th>Topic</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
                                 @isRole(['student'])
-                                    <th class="text-center">Actions</th>
+                                    <th>Actions</th>
                                 @endisRole
                             </tr>
                         </thead>
@@ -75,22 +76,33 @@
                 "columns": [{
                         data: 'DT_RowIndex',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        className: 'text-center'
                     },
                     {
                         data: null,
                         render: function(data, type, row) {
-                            return data['course_code'] + " - " + data['course']['name']
+                            return "<div class='W-100 '>" + data['course_code'] + " - " + data['course']['name'] + "</div>"
+              
                         }
                     },
                     {
                         data: 'name',
+                        render: function(data, type, row) {
+                            return "<div class=''>" + data + "</div>"
+                        }
                     },
                     {
                         data: 'time_start',
+                        render: function(data, type, row) {
+                            return "<div class=''>" + data + "</div>"
+                        }
                     },
                     {
                         data: 'time_end',
+                        render: function(data, type, row) {
+                            return "<div class=''>" + data + "</div>"
+                        }
                     },
                     @isRole(['student']) {
                         data: null,
@@ -165,7 +177,7 @@
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
                             header: function(e) {
-                                return "Details of " + e.data().full_name
+                                return "Details of " + e.data().name
                             }
                         }),
                         type: "column",

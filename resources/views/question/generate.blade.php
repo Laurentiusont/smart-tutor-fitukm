@@ -19,8 +19,20 @@
 
 @section('content')
     <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
-        <div class="col-md-3"><a class="btn btn-primary w-100" role="button" id="generate">Generate
+        {{-- <div class="col-md-3"><a class="btn btn-primary w-100" role="button" id="generate">Generate
                 Question<i class="" style="text-decoration: none; margin-left: 10px;"></i></a>
+        </div> --}}
+        <div class="container d-flex justify-content-center align-items-center">
+            <div class="row d-flex align-items-center justify-content-center">
+                <!-- Bagian untuk tombol generate -->
+                <div class="col-md-6 order-md-1 order-2">
+                    <a class="btn btn-primary w-100" role="button" id="generate">Generate Question<i class="" style="text-decoration: none; margin-left: 10px;"></i></a>
+                </div>
+                <!-- Bagian untuk keterangan -->
+                <div class="col-md-6 order-md-2 order-1">
+                    <p class="text-start">Silakan tekan tombol "Generate Question" untuk membuat pertanyaan baru. Anda dapat memilih bahasa, kursus, dan topik yang sesuai untuk pertanyaan yang ingin Anda buat.</p>
+                </div>
+            </div>
         </div>
         <div id="loading" style="display: none;">
             <div class="loader"></div>

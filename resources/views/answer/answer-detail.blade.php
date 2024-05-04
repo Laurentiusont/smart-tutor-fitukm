@@ -25,12 +25,12 @@
                     <table class="table" id="table-data">
                         <thead>
                             <tr>
-                                <th class="text-center">No</th>
-                                <th class="text-center">Question</th>
-                                <th class="text-center">Answer</th>
-                                <th class="text-center">Student Answer</th>
-                                <th class="text-center">Weight</th>
-                                <th class="text-center">Grade</th>
+                                <th>No</th>
+                                <th>Question</th>
+                                <th>Answer</th>
+                                <th>Student Answer</th>
+                                <th>Weight</th>
+                                <th>Grade</th>
                             </tr>
                         </thead>
                     </table>
@@ -182,7 +182,7 @@
                 displayLength: 10,
                 lengthMenu: [7, 10, 25, 50],
                 buttons: [{
-                    text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Save</span>',
+                    text: '<i class="fa-solid fa-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Save</span>',
                     className: "create-new btn btn-primary",
                     action: function(e, dt, node, config) {
                         // $('#modalAdd').modal('show');
@@ -194,7 +194,7 @@
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
                             header: function(e) {
-                                return "Details of " + e.data().full_name
+                                return "Details of " + e.data().question_fix
                             }
                         }),
                         type: "column",

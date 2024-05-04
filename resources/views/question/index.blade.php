@@ -267,7 +267,7 @@
                         render: function(data, type, row) {
                             return '<a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"data-guid="' +
                                 data['guid'] +
-                                '"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
+                                '"><i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;"></i></a>' +
                                 '<a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="' +
                                 data['guid'] +
                                 '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
@@ -303,7 +303,7 @@
                     [7, 10, 25, 50, "All"]
                 ],
                 buttons: [{
-                    text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Question</span>',
+                    text: '<i class="fa-solid fa-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Question</span>',
                     className: "create-new btn btn-primary",
                     action: function(e, dt, node, config) {
                         $('#modalAdd').modal('show');
@@ -311,7 +311,7 @@
                 }, {
 
                     extend: 'excelHtml5',
-                    text: '<i class="ti ti-download me-sm-1"></i> <span class="d-none d-sm-inline-block">Download Excel</span>',
+                    text: '<i class="fa-solid fa-download me-sm-1"></i> <span class="d-none d-sm-inline-block">Download Excel</span>',
                     titleAttr: 'Download Excel File',
                     className: "btn btn-success",
                     exportOptions: {
@@ -322,7 +322,7 @@
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
                             header: function(e) {
-                                return "Details of " + e.data().full_name
+                                return "Details of " + e.data().question_ai
                             }
                         }),
                         type: "column",

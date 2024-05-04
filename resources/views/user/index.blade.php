@@ -21,19 +21,21 @@
             <!-- DataTable with Buttons -->
             <div class="card" id="card-block">
                 <div class="card-datatable table-responsive pt-0">
-                    <table class="table" id="table-data">
-                        <thead>
-                            <tr>
-                                <th class="text-center">No</th>
-                                <th class="text-center">Id</th>
-                                <th class="text-center">Username</th>
-                                <th class="text-center">Name</th>
-                                <th class="text-center">Email</th>
-                                <th class="text-center">Role</th>
-                                <th class="text-center"></th>
-                            </tr>
-                        </thead>
-                    </table>
+                 
+                        <table class="table" id="table-data">
+                            <thead>
+                                <tr>
+                                    <th >No</th>
+                                    <th >Id</th>
+                                    <th >Username</th>
+                                    <th >Name</th>
+                                    <th >Email</th>
+                                    <th >Role</th>
+                                    <th ></th>
+                                </tr>
+                            </thead>
+                        </table>
+                  
                     <!-- Modal Delete-->
                     <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -100,40 +102,49 @@
                 "columns": [{
                         data: 'DT_RowIndex',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
                     },
                     {
                         data: 'id',
+                        render: function(data, type, row) {
+                            return "<div >" + data + "</div>"
+                        }
                     },
                     {
                         data: 'username',
+                        render: function(data, type, row) {
+                            return "<div >" + data + "</div>"
+                        }
                     },
                     {
                         data: 'name',
                         render: function(data, type, row) {
-                            return "<div class='text-wrap'>" + data + "</div>"
+                            return "<div >" + data + "</div>"
                         }
                     },
                     {
                         data: 'email',
+                        render: function(data, type, row) {
+                            return "<div >" + data + "</div>"
+                        }
                     },
                     {
                         data: 'role',
                         render: function(data, type, row) {
-                            return data['role_name']
+                            return "<div >" + data['role_name'] + "</div>"
                         }
                     },
                     {
                         data: null,
                         title: "Actions",
                         render: function(data, type, row) {
-                            return '<a href="/user/edit/' + data['id'] +
+                            return '<div class="">'+'<a href="/user/edit/' + data['id'] +
                                 '" role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"data-id="' +
                                 data['id'] +
-                                '"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
+                                '"><i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;"></i></a>' +
                                 '<a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-id="' +
                                 data['id'] +
-                                '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
+                                '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>'+'</div>';
                         },
                         "orderable": false,
                         "searchable": false
@@ -163,37 +174,40 @@
                 displayLength: 10,
                 lengthMenu: [7, 10, 25, 50],
                 buttons: [{
-                    text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add User</span>',
+                    text: '<i class="fas fa-user-plus me-sm-1 text-center"></i> <span class="d-none d-sm-inline-block">Add User</span>',
                     className: "create-new btn btn-primary",
                     action: function(e, dt, node, config) {
                         window.location = 'user/create';
                     }
                 }, {
-                    text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add CSV</span>',
+                    text: '<i class="fas fa-file-csv me-sm-1 text-center"></i> <span class="d-none d-sm-inline-block">Add CSV</span>',
                     className: "create-new btn btn-success",
                     action: function(e, dt, node, config) {
                         window.location = 'user/create-csv';
                     }
                 }],
+
                 responsive: {
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
                             header: function(e) {
-                                return "Details of " + e.data().full_name
+                                return "Details of " + e.data().name
                             }
                         }),
                         type: "column",
                         renderer: function(e, t, a) {
                             a = $.map(a, function(e, t) {
                                 return "" !== e.title ? '<tr data-dt-row="' + e.rowIndex +
-                                    '" data-dt-column="' + e.columnIndex + '"><td>' + e.title +
-                                    ":</td> <td>" + e.data + "</td></tr>" : ""
+                                    '" data-dt-column="' + e.columnIndex + '"><td >' + e.title +
+                                    ":</td> <td >" + e.data + "</td></tr>" : ""
                             }).join("");
                             return !!a && $('<table class="table"/><tbody />').append(a)
                         }
                     }
-                },
+                }
             }), $("div.head-label").html('<h5 class="card-title mb-0">User Data</h5>');
+
+            
 
             $(document).on("click", ".open-delete-dialog", function() {
                 var id = $(this).data('id');

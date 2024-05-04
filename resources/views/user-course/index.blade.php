@@ -25,10 +25,10 @@
                     <table class="table" id="table-data">
                         <thead>
                             <tr>
-                                <th class="text-center">No</th>
-                                <th class="text-center">Id</th>
-                                <th class="text-center">Name</th>
-                                <th class="text-center">Actions</th>
+                                <th>No</th>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                     </table>
@@ -172,7 +172,7 @@
                 displayLength: 10,
                 lengthMenu: [7, 10, 25, 50],
                 buttons: [{
-                    text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Student</span>',
+                    text: '<i class="fa-solid fa-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Student</span>',
                     className: "create-new btn btn-primary",
                     action: function(e, dt, node, config) {
                         $('#modalAdd').modal('show');
@@ -182,7 +182,7 @@
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
                             header: function(e) {
-                                return "Details of " + e.data().full_name
+                                return "Details of " + e.data().user_id
                             }
                         }),
                         type: "column",

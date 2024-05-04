@@ -24,10 +24,10 @@
                     <table class="table" id="table-data">
                         <thead>
                             <tr>
-                                <th class="text-center">Code</th>
-                                <th class="text-center">Name</th>
-                                <th class="text-center">Description</th>
-                                <th class="text-center">Action</th>
+                                <th >Code</th>
+                                <th >Name</th>
+                                <th >Description</th>
+                                <th >Action</th>
                             </tr>
                         </thead>
                     </table>
@@ -189,7 +189,7 @@
 
                                 '<a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;"data-code="' +
                                 data['code'] +
-                                '"><i class="fa-solid fa-pen" style="font-size: 15px; color: green;"></i></a>' +
+                                '"><i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;"></i></a>' +
                                 '<a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-code="' +
                                 data['code'] +
                                 '"><i class="fa-solid fa-trash" style="font-size: 15px; color: red;"></i></a>';
@@ -223,7 +223,7 @@
                 displayLength: 10,
                 lengthMenu: [7, 10, 25, 50],
                 buttons: [@isRole(['admin', 'lecturer']) {
-                        text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Course</span>',
+                        text: '<i class="fa-solid fa-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add Course</span>',
                         className: "create-new btn btn-primary",
                         action: function(e, dt, node, config) {
                             $('#modalAdd').modal('show');
@@ -235,7 +235,7 @@
                     details: {
                         display: $.fn.dataTable.Responsive.display.modal({
                             header: function(e) {
-                                return "Details of " + e.data().full_name
+                                return "Details of " + e.data().name
                             }
                         }),
                         type: "column",
