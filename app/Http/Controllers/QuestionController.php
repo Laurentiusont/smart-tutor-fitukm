@@ -30,6 +30,24 @@ class QuestionController extends Controller
         return ResponseController::getResponse(['path' => $path, 'name' => $name, 'page' => $page], 200, 'Success');
     }
 
+    public function checkCossine(Request $request)
+    {
+        $Rawdata = Http::timeout(300)->post(
+            'http://127.0.0.1:5000/cossine_similarity',
+            [
+                'question' => $request->get('question'),
+                'answer' => $request->get('answer')
+            ]
+        );
+        $data = json_encode($Rawdata[0][0], true);
+        if (isset($data)) {
+            $floatValue = floatval($data);
+            $formattedValue = number_format($floatValue * 100, 2);
+            return $formattedValue;
+        } else {
+            return false;
+        }
+    }
     public function generateData(Request $request)
     {
 
@@ -90,6 +108,8 @@ class QuestionController extends Controller
             'answer_fix' => 'required|string',
             'weight' => 'required|numeric',
             'category' => 'required|string|max:40',
+            'cossine_similarity' => 'required|numeric',
+            'page' => 'nullable|string',
             'topic_guid' => 'required|string|max:40',
         ], MessagesController::messages());
 
@@ -104,7 +124,12 @@ class QuestionController extends Controller
             'category' => $request['category'],
             'weight' => $request['weight'],
             'topic_guid' => $request['topic_guid'],
+            'cossine_similarity' => $request['cossine_similarity'],
+            'page' => $request['page']
         ]);
+        if ($request['page']) {
+            $data->page = $request['page'];
+        }
 
         return ResponseController::getResponse($data, 200, 'Success');
     }

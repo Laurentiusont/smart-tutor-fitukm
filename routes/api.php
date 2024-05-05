@@ -96,6 +96,7 @@ Route::group([
 ], function ($router) {
     $router->post('/upload-file', [QuestionController::class, 'uploadFile']);
     $router->get('/generate', [QuestionController::class, 'generateData']);
+    $router->get('/check-cossine', [QuestionController::class, 'checkCossine']);
     $router->post('/convert/datatable', [QuestionController::class, 'convertDatatable']);
     $router->get('/show/{guid}', [QuestionController::class, 'showData']);
     $router->put('/', [QuestionController::class, 'updateData']);

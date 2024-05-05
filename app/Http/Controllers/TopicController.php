@@ -97,6 +97,7 @@ class TopicController extends Controller
                 $query->where('user_id', '=', $request['id']);
             }])
             ->where('time_end', '>', $currentDateTime)
+            ->where('time_start', '<=', $currentDateTime)
             ->whereIn("course_code", $course)
             ->get();
         $dataTable = DataTables::of($topic)

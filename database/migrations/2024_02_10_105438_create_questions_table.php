@@ -20,6 +20,8 @@ return new class extends Migration
             $table->float('weight');
             $table->char('category', 30);
             $table->char('topic_guid', 36);
+            $table->string('page')->nullable();
+            $table->float('cossine_similarity')->nullable();
             $table->foreign('topic_guid')->references('guid')->on('topics')->onDelete('cascade');
             $table->timestamps();
         });

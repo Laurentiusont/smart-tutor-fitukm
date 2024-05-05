@@ -30,7 +30,7 @@ class Question extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'question_ai', 'answer_ai',  'question_fix', 'answer_fix', 'weight',  'category', 'topic_guid'
+        'question_ai', 'answer_ai',  'question_fix', 'answer_fix', 'weight',  'category', 'topic_guid', 'page', 'cossine_similarity'
     ];
 
     /**
