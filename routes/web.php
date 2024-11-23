@@ -7,6 +7,7 @@ use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SessionController;
@@ -69,4 +70,7 @@ Route::group([
     Route::get('/user/answer/result/{guid}', [AnswerController::class, 'answerResult'])->name('user-answer-result')->middleware('role:student');
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user-profile');
     Route::get('/password/change', [PasswordController::class, 'changePassword'])->name('change-password');
+    Route::get('/meeting/create', [MeetingController::class, 'index'])->name('create-user-meeting')->middleware('role:admin,lecturer');
+    Route::get('/meeting/list', [MeetingController::class, 'list'])->name('list-user-meeting');
+    Route::get('/join', [MeetingController::class, 'masuk'])->name('join-meeting');
 });

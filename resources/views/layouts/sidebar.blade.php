@@ -85,6 +85,20 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link {{ Request::is('list-user-meeting') ? 'active' : '' }}"
+                        href="{{ url('meeting/list') }}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <img src="{{ asset('assets/img/learning.png') }}" width="14px" height="14px"
+                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <title>shop </title>
+                        </div>
+                        <p class="m-1 textSidebar">Meeting List</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link " role="button" id="logout">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">

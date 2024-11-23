@@ -311,40 +311,44 @@
                         render: function(data, type, row) {
                             @isRole(['admin', 'lecturer', 'assistant'], $code)
                             return `
-        <a href="/question/{{ $code }}/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
-            <i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;" data-bs-toggle="tooltip" title="View Details"></i>
-        </a>
-        <a href="/grade/{{ $code }}/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
-            <i class="fa-solid fa fa-percent" style="font-size: 15px; color: yellowgreen;" data-bs-toggle="tooltip" title="Grade"></i>
-        </a>
-        <a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;" data-guid="${data['guid']}">
-            <i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;" data-bs-toggle="tooltip" title="Edit"></i>
-        </a>
-        <a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="${data['guid']}">
-            <i class="fa-solid fa-trash" style="font-size: 15px; color: red;" data-bs-toggle="tooltip" title="Delete"></i>
-        </a>
-    `;
+                                <a href="/question/{{ $code }}/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
+                                    <i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;" data-bs-toggle="tooltip" title="View Details"></i>
+                                </a>
+                                <a href="/grade/{{ $code }}/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
+                                    <i class="fa-solid fa fa-percent" style="font-size: 15px; color: yellowgreen;" data-bs-toggle="tooltip" title="Grade"></i>
+                                </a>
+       
+                                 <a role="button" class="edit-btn open-zoom-dialog" style="text-decoration: none; margin-right: 10px;" data-guid="${data['guid']}">
+                                    <i class="fa-solid fa-video" style="font-size: 15px; color: skyblue;" data-bs-toggle="tooltip" title="Meeting"></i>
+                                </a>
+                                <a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;" data-guid="${data['guid']}">
+                                    <i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;" data-bs-toggle="tooltip" title="Edit"></i>
+                                </a>
+                                <a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="${data['guid']}">
+                                    <i class="fa-solid fa-trash" style="font-size: 15px; color: red;" data-bs-toggle="tooltip" title="Delete"></i>
+                                </a>
+                            `;
                             @else
                             var serverTime = new Date();
                             serverTime.setHours(serverTime.getHours() + 7);
                             var startTime = new Date(row.time_start);
                             if (startTime > serverTime) {
                                 return `
-            <i class="fa-solid fa-lock" style="font-size: 15px; color: gray;" data-bs-toggle="tooltip" title="Locked"></i>
-        `;
+                                    <i class="fa-solid fa-lock" style="font-size: 15px; color: gray;" data-bs-toggle="tooltip" title="Locked"></i>
+                                `;
                             } else {
                                 if (data['grade'][0] == null && data['deadline']) {
                                     return `
-                <a href="/user/answer/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
-                    <i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;" data-bs-toggle="tooltip" title="Answer"></i>
-                </a>
-            `;
+                                        <a href="/user/answer/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
+                                            <i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;" data-bs-toggle="tooltip" title="Answer"></i>
+                                        </a>
+                                    `;
                                 } else {
                                     return `
-                <a href="/user/answer/result/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
-                    <i class="fa-solid fa fa-eye" style="font-size: 15px; color: blue;" data-bs-toggle="tooltip" title="View Result"></i>
-                </a>
-            `;
+                                        <a href="/user/answer/result/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
+                                            <i class="fa-solid fa fa-eye" style="font-size: 15px; color: blue;" data-bs-toggle="tooltip" title="View Result"></i>
+                                        </a>
+                                    `;
                                 }
                             }
                             @endisRole
@@ -412,6 +416,18 @@
             $('[data-bs-toggle="tooltip"]').tooltip();
             $('#table-data').on('draw.dt', function() {
                 $('[data-bs-toggle="tooltip"]').tooltip();
+            });
+
+            $(document).on("click", ".open-zoom-dialog", function () {
+                var guid = $(this).data('guid');
+                var token = '{{ $id }}'; // Token dari backend (Laravel)
+
+                if (token) {
+                    var zoomRedirectUrl = `http://localhost:8004/api/v1/zoom/redirect?token=`+ token;
+                    window.location.href = zoomRedirectUrl;
+                } else {
+                    alert('User is not authenticated.');
+                }
             });
 
             $(document).on("click", ".open-delete-dialog", function() {

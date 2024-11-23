@@ -72,5 +72,6 @@ class AuthController extends Controller
         $session->set('name', $userData['data']['name']);
         $session->set('id', $userData['data']['id']);
         $session->set('role_name', $userData['data']['role']['role_name']);
+        $session->set('email', $userData['data']['email']);
     }
 }

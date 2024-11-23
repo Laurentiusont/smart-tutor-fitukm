@@ -134,6 +134,9 @@
                                         name: result['data'][
                                             'name'
                                         ],
+                                        email: result['data'][
+                                            'email'
+                                        ],
                                         id: result['data'][
                                             'id'
                                         ],

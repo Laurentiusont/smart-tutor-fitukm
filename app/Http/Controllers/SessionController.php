@@ -12,6 +12,7 @@ class SessionController extends Controller
         $session = new Session();
         $session->set('access_token', $request->access_token);
         $session->set('name', $request->name);
+        $session->set('email', $request->email);
         $session->set('id', $request->id);
         $session->set('role_name', $request->role_name);
 
