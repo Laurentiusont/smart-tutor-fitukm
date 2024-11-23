@@ -29,6 +29,9 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'email',
         'role_guid',
+        'zoom_user_id', 
+        'zoom_access_token',
+        'zoom_token_expires_at',
     ];
 
     /**
@@ -90,5 +93,12 @@ class User extends Authenticatable implements JWTSubject
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+    /**
+     * MEETING OBJECT
+     */
+    public function meetings()
+    {
+        return $this->hasMany(Meeting::class);
     }
 }

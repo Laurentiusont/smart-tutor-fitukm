@@ -19,6 +19,10 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password')->nullable();
+            $table->string('zoom_user_id')->nullable(); // Remove 'after' here
+            $table->text('zoom_access_token')->nullable(); // Remove 'after' here
+            $table->text('zoom_refresh_token')->nullable(); // Ensure this column exists for token refresh
+            $table->timestamp('zoom_token_expires_at')->nullable(); // Remove 'after' here
             $table->char('role_guid', 36);
             $table->rememberToken();
             $table->timestamps();

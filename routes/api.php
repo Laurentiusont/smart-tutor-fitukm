@@ -12,6 +12,7 @@ use App\Http\Controllers\GradeController;
 use App\Http\Controllers\JawabanController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\MateriController;
+use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SoalController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserCourseController;
 use App\Http\Controllers\UserMataKuliahController;
+use App\Http\Controllers\ZoomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -232,4 +234,28 @@ Route::group([
     $router->get('/', [GradeController::class, 'getData']);
     $router->post('/', [GradeController::class, 'insertData']);
     $router->put('/', [GradeController::class, 'updateData']);
+
 });
+
+/**
+ * ZOOM
+ */
+Route::group([
+    'prefix' => $url . 'zoom',
+    'middleware' => 'api',
+], function ($router): void {
+    $router->get('/redirect', [ZoomController::class, 'redirectToProvider']);
+    $router->get('/callback', [ZoomController::class, 'handleProviderCallback']);
+    $router->get('/join/{meetingId}', [MeetingController::class, 'join']);
+    $router->post('/signature', [MeetingController::class, 'generateSignature']);
+});
+Route::group([
+    'prefix' => $url . 'meeting',
+    'middleware' => 'jwt.verify',
+], function ($router): void {
+
+    $router->post('/create', [MeetingController::class, 'store']);
+    $router->get('/list', [MeetingController::class, 'showData']);
+    
+});
+
