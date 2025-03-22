@@ -201,6 +201,7 @@ class ChatHistoryController extends Controller
                 'message' => 'No remaining questions. Would you like to regenerate questions?',
                 'similarityMessage' => $similarityMessage,  // HTML disertakan dalam response
                 'similarity_score' => $similarity_score,
+                'answer_ai' => $answer_ai
             ]);
         }
 

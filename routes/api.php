@@ -18,6 +18,7 @@ use App\Http\Controllers\SoalController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserCourseController;
+use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\UserMataKuliahController;
 use App\Models\ChatHistory;
 use Illuminate\Http\Request;
@@ -214,6 +215,21 @@ Route::group([
     $router->get('/user/{id}', [UserCourseController::class, 'getDataByUser']);
     $router->delete('/{code}', [UserCourseController::class, 'deleteData']);
     $router->post('/', [UserCourseController::class, 'insertData']);
+});
+
+/**
+ * MEETING
+ */
+Route::group([
+    'prefix' => $url . 'meeting',
+    'middleware' => 'jwt.verify'
+], function ($router) {
+    $router->get('/', [ZoomController::class, 'showData']);
+    $router->put('/', [ZoomController::class, 'updateData']);
+    $router->get('/{guid}', [ZoomController::class, 'getData']);
+    $router->post('/bulk-delete', [ZoomController::class, 'bulkDeleteMeetings']);
+    $router->post('/', [ZoomController::class, 'insertData']);
+    $router->delete('/{guid}', [ZoomController::class, 'deleteData']);
 });
 
 /**
