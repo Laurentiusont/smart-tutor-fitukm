@@ -150,9 +150,12 @@
         <button id="start-quiz" class="btn btn-primary mt-2" disabled>Start Quiz</button>
     </div>
 
-    <div class="chatbot-container" id="chatbot-container">
-        <!-- Chatbot history will load here -->
+    <div id="chatbot-block">
+        <div class="chatbot-container" id="chatbot-container">
+            <!-- Chatbot history will load here -->
+        </div>
     </div>
+
 
     <div class="input-group">
         <textarea id="user-input" class="form-control" rows="1" placeholder="Type your answer here..." disabled></textarea>
@@ -163,6 +166,7 @@
     <script src="https://cdn.tiny.cloud/1/lvz6goxyxn405p74zr5vcn0xmwy7mmff6jf5wjqki5abvi3g/tinymce/7/tinymce.min.js"
         referrerpolicy="origin"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 @endsection
 @section('custom-javascript')
     <script type="text/javascript">
@@ -459,6 +463,19 @@
                 isSubmitting = true;
 
                 // $("#user-input").prop("disabled", true);
+                $("#chatbot-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
 
                 $.ajax({
                     type: "POST",
@@ -476,7 +493,7 @@
                     },
                     success: function(response) {
                         isSubmitting = false;
-
+                        $("#chatbot-block").unblock();
                         const similarityMessage = response.similarityMessage;
                         $("#chatbot-container").append(
                             `<div class="bot-message">${similarityMessage}</div>`,
@@ -504,6 +521,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        $("#chatbot-block").unblock();
                         var errorMessage = xhr.status + ': ' + xhr.statusText;
                         toastr.options.closeButton = true;
                         toastr.error("Error saving message: " + errorMessage, "Error");

@@ -12,6 +12,11 @@
     <div class="menu">
         <div class="collapse navbar-collapse w-auto h-100" id="sidenav-collapse-main">
             <ul class="navbar-nav">
+                <li class="TextSidebar mt-2">
+                    <h6 class="textSidebar ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
+                        Feature
+                    </h6>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('dashboard') }}">
                         <div
@@ -23,11 +28,6 @@
                         </div>
                         <p class="m-1 textSidebar">Quiz</p>
                     </a>
-                </li>
-                <li class="TextSidebar mt-2">
-                    <h6 class="textSidebar ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
-                        Feature
-                    </h6>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('user/profile') ? 'active' : '' }}"
@@ -44,7 +44,7 @@
                 </li>
                 @isRole(['admin', 'lecturer'])
                     <li class="nav-item">
-                        <a class="nav-link {{ Request::is('user') ? 'active' : '' }} {{ Request::is('user/create-csv') ? 'active' : '' }}"
+                        <a class="nav-link {{ Request::is('user') ? 'active' : '' }} {{ Request::is('user/create-csv') ? 'active' : '' }} {{ Request::is('user/create') ? 'active' : '' }}"
                             href="{{ url('user') }}">
                             <div
                                 class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -69,7 +69,18 @@
                         </a>
                     </li>
                 @endisRole
-
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('zoom') ? 'active' : '' }}  " href="{{ url('zoom') }}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <img src="{{ asset('assets/img/zoom.png') }}" width="14px" height="14px"
+                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <title>shop </title>
+                        </div>
+                        <p class="m-1 textSidebar">Online Meeting</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('course') ? 'active' : '' }} {{ Request::is('topic/*') ? 'active open' : '' }} {{ Request::is('question/*') ? 'active open' : '' }} {{ Request::is('grade/*') ? 'active open' : '' }} {{ Request::is('user/answer/*') ? 'active open' : '' }} {{ Request::is('answer/detail/*') ? 'active open' : '' }} {{ Request::is('student/*') ? 'active open' : '' }} {{ Request::is('assistant/*') ? 'active open' : '' }}"
                         href="{{ url('course') }}">

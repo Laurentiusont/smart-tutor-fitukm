@@ -43,15 +43,20 @@
 
                             <div class="row">
                                 <div class="col-12">
-                                    <button type="submit" id="login"
-                                        class="btn btn-outline-primary border-5 w-100">{{ __('Login') }}</button>
+                                    <button type="submit" id="login" class="btn btn-outline-primary border-5 w-100">
+                                        <span id="loading-spinner" class="d-none spinner-border spinner-border-sm"
+                                            role="status" aria-hidden="true"></span>
+                                        {{ __('Login') }}
+                                    </button>
                                 </div>
                             </div>
 
                             <div class="text-center mt-4">
                                 <p>OR</p>
-                                <a href="{{ route('google-auth') }}"
+                                <a href="{{ route('google-auth') }}" id="google-login"
                                     class="btn btn-light w-100 border d-flex align-items-center justify-content-center">
+                                    <span id="google-loading-spinner" class="d-none spinner-border spinner-border-sm"
+                                        role="status" aria-hidden="true"></span>
                                     <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo"
                                         style="width: 20px; height: 20px; margin-right: 10px;">
                                     Sign in with Google
@@ -86,6 +91,9 @@
 
                 var emailAddress = $("#email").val();
                 var loginPassword = $("#password").val();
+
+                $("#loading-spinner").removeClass("d-none");
+                $("#login").prop("disabled", true);
 
                 $.ajax({
                     type: "POST",
@@ -169,8 +177,25 @@
                         var jsonResponse = JSON.parse(xhr.responseText);
                         $('#error-message-login').text(jsonResponse['message']);
                         $('#error-message-login').removeClass("d-none");
+                    },
+                    complete: function() {
+                        // Menyembunyikan spinner dan mengaktifkan tombol kembali
+                        $("#loading-spinner").addClass("d-none");
+                        $("#login").prop("disabled", false);
                     }
                 });
+
+            });
+
+            $("#google-login").click(function(e) {
+                // e.preventDefault();
+
+                // Menampilkan spinner dan menyembunyikan gambar serta teks login Google
+                $("#google-loading-spinner").removeClass("d-none");
+                $("#google-login img").addClass("d-none");
+                $("#google-login").prop("disabled", true);
+
+                // Simulasi proses login Google atau gunakan AJAX untuk login Google
 
             });
         });

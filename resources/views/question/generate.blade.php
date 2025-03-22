@@ -244,6 +244,7 @@
             // Fungsi untuk handle submit form
             let completedRequests = 0; // Jumlah operasi yang sudah selesai
             let totalRequests = 0; // Total operasi yang akan dijalankan
+            let errorMessages = [];
 
             $('#generateQuestionForm').submit(function(event) {
                 event.preventDefault();
@@ -272,7 +273,7 @@
 
                 // Set jumlah total operasi berdasarkan bahasa yang dipilih
                 totalRequests = selectedLanguages.length;
-
+                startProcess();
                 if (cachedFilePath) {
                     // Jika menggunakan file yang sudah dicache
                     selectedLanguages.forEach(language => {
@@ -328,9 +329,6 @@
                 formData.append('language', fileLanguage); // Kirimkan bahasa yang dipilih untuk file
                 formData.append('topic_guid', topic);
 
-                $.blockUI({
-                    message: '<h4>Uploading file...</h4>'
-                });
 
                 $.ajax({
                     url: "{{ env('URL_API') }}/api/v1/topic/upload-file",
@@ -342,8 +340,9 @@
                         request.setRequestHeader("Authorization", "Bearer {{ $token }}");
                     },
                     success: function() {
-                        $.unblockUI();
+                        // $.unblockUI();
                         // alert('File uploaded successfully.');
+                        updateProcessStatus('Upload File', fileLanguage, true);
 
                         // Lakukan translate untuk setiap bahasa setelah upload berhasil
                         languages.forEach(language => {
@@ -352,6 +351,7 @@
                     },
                     error: function() {
                         $.unblockUI();
+                        updateProcessStatus('Upload File', fileLanguage, false);
                         toastr.options.closeButton = true;
                         toastr.options.timeOut = 3000;
                         toastr.error('Failed to upload file.');
@@ -360,11 +360,51 @@
                 });
             }
 
+            function updateProcessStatus(step, language, isSuccess) {
+                const stepContainer = $('#process-status-list');
+                let icon = isSuccess ? '✔️' : '❌'; // Pilih ikon sesuai status
+                let color = isSuccess ? 'green' : 'red'; // Pilih warna teks
+
+                // Jika elemen belum ada, tambahkan ke dalam daftar
+                let stepItem = stepContainer.find(`#step-${step}-${language}`);
+                if (stepItem.length === 0) {
+                    stepContainer.append(`
+            <li id="step-${step}-${language}" style="color: ${color}; font-weight: bold;">
+                ${icon} ${step} for ${language}
+            </li>
+        `);
+                }
+            }
+
+
+            function startProcess() {
+                $.blockUI({
+                    message: `
+        <div style="text-align: left; font-size: 16px; font-family: Arial, sans-serif;">
+            <h4>Processing Steps:</h4>
+            <ul id="process-status-list">
+                <li>Initializing...</li>
+            </ul>
+        </div>`,
+                    css: {
+                        border: 'none',
+                        padding: '15px',
+                        backgroundColor: '#f4f4f4',
+                        opacity: 0.9,
+                        color: '#333',
+                        fontSize: '18px',
+                        borderRadius: '8px',
+                        width: '400px',
+                        minWidth: '300px'
+                    },
+                    overlayCSS: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        opacity: 0.8
+                    }
+                });
+            }
 
             function sendToTranslateDocument(language, topic) {
-                $.blockUI({
-                    message: `<h4>Translating document to ${language}...</h4>`
-                });
                 $.ajax({
                     type: "POST",
                     url: "{{ env('URL_API') }}/api/v1/question/translate",
@@ -376,20 +416,22 @@
                         request.setRequestHeader("Authorization", "Bearer {{ $token }}");
                     },
                     success: function() {
-                        $.unblockUI();
+                        updateProcessStatus('Translating Document', language, true); // ✅ Sukses
                         sendToTfidfDocument(language, topic);
                     },
-                    error: function() {
-                        $.unblockUI();
-                        alert(`Failed to translate document to ${language}.`);
+                    error: function(xhr) {
+                        updateProcessStatus('Translating Document', language, false);
+
+                        let errorMessage =
+                            `Translation failed for ${language}: ${xhr.responseJSON?.message || "Unknown error"}`;
+                        errorMessages.push(errorMessage);
+                        checkCompletion();
                     }
+
                 });
             }
 
             function sendToTfidfDocument(language, topic) {
-                $.blockUI({
-                    message: `<h4>Calculating TF-IDF for ${language}...</h4>`
-                });
                 $.ajax({
                     type: "POST",
                     url: "{{ env('URL_API') }}/api/v1/question/tfidf",
@@ -401,21 +443,20 @@
                         request.setRequestHeader("Authorization", "Bearer {{ $token }}");
                     },
                     success: function() {
-                        $.unblockUI();
+                        updateProcessStatus('Calculating TF-IDF', language, true); // ✅ Sukses
                         sendToGenerateData(language, topic);
                     },
-                    error: function() {
-                        $.unblockUI();
-                        alert(`Failed to calculate TF-IDF for ${language}.`);
+                    error: function(xhr) {
+                        updateProcessStatus('Calculating TF-IDF', language, false); // ❌ Gagal
+                        let errorMessage =
+                            `TF-IDF failed for ${language}: ${xhr.responseJSON?.message || "Unknown error"}`;
+                        errorMessages.push(errorMessage);
+                        checkCompletion();
                     }
                 });
             }
 
             function sendToGenerateData(language, topic) {
-                $.blockUI({
-                    message: `<h4>Generating questions in ${language}...</h4>`
-                });
-
                 $.ajax({
                     type: "POST",
                     url: "{{ env('URL_API') }}/api/v1/question/generate",
@@ -427,16 +468,15 @@
                         request.setRequestHeader("Authorization", "Bearer {{ $token }}");
                     },
                     success: function(response) {
-                        console.log(response);
-                        // Tambahkan data ke tabel
+                        updateProcessStatus('Generating Questions', language, true); // ✅ Sukses
                         loadDataToTable(response.data, language);
-
-                        // Tingkatkan jumlah permintaan yang selesai
                         checkCompletion();
                     },
                     error: function() {
-                        alert(`Failed to generate questions in ${language}.`);
-                        // Tetap tingkatkan jumlah permintaan yang selesai meskipun gagal
+                        updateProcessStatus('Generating Questions', language, false); // ❌ Gagal
+                        let errorMessage =
+                            `Generation failed for ${language}: ${xhr.responseJSON?.message || "Unknown error"}`;
+                        errorMessages.push(errorMessage);
                         checkCompletion();
                     }
                 });
@@ -445,13 +485,32 @@
             // Fungsi untuk mengecek apakah semua permintaan selesai
             function checkCompletion() {
                 completedRequests++;
-                console.log(completedRequests);
-                console.log(totalRequests);
+
                 if (completedRequests === totalRequests) {
-                    // Jika semua permintaan selesai, hentikan loading
                     $.unblockUI();
+
+                    // Jika ada yang sukses, tampilkan pesan sukses
+                    if (errorMessages.length < totalRequests) {
+                        toastr.success("All possible steps completed successfully!");
+                    }
+
+                    // Jika ada error, tampilkan semua pesan error
+                    if (errorMessages.length > 0) {
+                        errorMessages.forEach(msg => {
+                            toastr.options = {
+                                "closeButton": true, // Tambahkan tombol close (X)
+                                "timeOut": 0, // Tidak ada auto-hide
+                                "extendedTimeOut": 0, // Tidak hilang meskipun mouse keluar
+                            };
+                            toastr.error(msg);
+                        });
+                    }
+
+                    // Reset error messages dan failedLanguages untuk proses selanjutnya
+                    errorMessages = [];
                 }
             }
+
 
 
 

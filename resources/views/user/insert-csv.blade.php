@@ -87,6 +87,7 @@
     <script src="{{ asset('./assets/dashboard/datatables-rowgroup/datatables.rowgroup.js') }}"></script>
     <script src="{{ asset('./assets/dashboard/datatables-rowgroup-bs5/rowgroup.bootstrap5.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 @endsection
 @section('custom-javascript')
     <script type="text/javascript">
@@ -109,6 +110,20 @@
                 $('#generateQuestionModal').modal(
                     'hide');
                 event.preventDefault();
+
+                $("#card-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
 
                 var csvFile = $('#csvInput')[0].files[0];
                 if (!csvFile) {
@@ -213,6 +228,19 @@
                                 text: '<span class="d-none d-sm-inline-block" id="save-btn">Save</span>',
                                 className: "create-new btn btn-success",
                                 action: function(e, dt, node, config) {
+                                    $("#card-block").block({
+                                        message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                                        css: {
+                                            border: 'none',
+                                            backgroundColor: 'transparent',
+                                            color: '#00796b',
+                                            fontSize: '1.2rem',
+                                        },
+                                        overlayCSS: {
+                                            backgroundColor: '#fff',
+                                            opacity: 0.8,
+                                        },
+                                    });
                                     saveData();
                                 }
                             }],
@@ -246,6 +274,8 @@
 
                         }), $("div.head-label").html(
                             '<h5 class="card-title mb-0">Generate Question</h5>');
+                        $("#card-block").unblock();
+
                     }
                 })
 
@@ -326,17 +356,26 @@
                                 error: function(xhr) {
                                     errorCount++;
                                     if (successCount + errorCount === numRows) {
+                                        $("#card-block").unblock();
+                                        var jsonResponse = JSON.parse(xhr.responseText);
                                         toastr.options.closeButton = true;
-                                        toastr.error('Error occurred while saving data.',
-                                            'Error');
+                                        toastr.error(
+                                            jsonResponse['message'],
+                                            "Error",
+                                        );
                                     }
                                 }
                             });
                         },
                         error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
+                            $("#card-block").unblock();
+                            var jsonResponse = JSON.parse(xhr.responseText);
+                            toastr.options.closeButton = true;
+                            toastr.error(
+                                jsonResponse['message'],
+                                "Error",
+                            );
                         }
-
                     });
 
                 });

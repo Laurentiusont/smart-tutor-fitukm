@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ asset('./assets/dashboard/datatables-buttons-bs5/buttons.bootstrap5.css') }}">
     <!-- Row Group CSS -->
     <link rel="stylesheet" href="{{ asset('./assets/dashboard/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 @endsection
 @section('info-page')
     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
@@ -53,6 +54,7 @@
     <!-- Row Group JS -->
     <script src="{{ asset('./assets/dashboard/datatables-rowgroup/datatables.rowgroup.js') }}"></script>
     <script src="{{ asset('./assets/dashboard/datatables-rowgroup-bs5/rowgroup.bootstrap5.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 @endsection
 @section('custom-javascript')
     <script type="text/javascript">
@@ -96,13 +98,33 @@
                     {
                         data: 'time_start',
                         render: function(data, type, row) {
-                            return "<div class=''>" + data + "</div>"
+                            // Menggunakan JavaScript Date untuk format tanggal
+                            var startDate = new Date(data);
+                            var formattedStartDate = startDate.toLocaleString('id-ID', {
+                                weekday: 'short', // Hari singkat (Sen, Sel, dst.)
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            return formattedStartDate;
                         }
                     },
                     {
                         data: 'time_end',
                         render: function(data, type, row) {
-                            return "<div class=''>" + data + "</div>"
+                            // Format tanggal yang sama untuk waktu selesai
+                            var endDate = new Date(data);
+                            var formattedEndDate = endDate.toLocaleString('id-ID', {
+                                weekday: 'short',
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            return formattedEndDate;
                         }
                     },
                     @isRole(['student']) {

@@ -48,7 +48,7 @@
                     <!-- Modal Add Topic -->
                     <div class="modal fade" id="modalAdd" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-add-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add Topic</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -57,26 +57,31 @@
                                 <div class="modal-body">
                                     <form id="add-form">
                                         <div class="mb-3">
-                                            <label for="add-name" class="form-label">Name</label>
+                                            <label for="add-name" class="form-label">Name <span
+                                                    class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="add-name" name="add-name"
                                                 required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-description" class="form-label">Description</label>
+                                            <label for="add-description" class="form-label">Description <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control" id="add-description" name="add-description" rows="3" required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-max-attempt" class="form-label">Max Attempt GPT</label>
+                                            <label for="add-max-attempt" class="form-label">Max Attempt GPT <span
+                                                    class="text-danger">*</span></label>
                                             <input type="number" class="form-control" id="add-max-attempt"
                                                 name="add-max-attempt" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-start-time" class="form-label">Start Time</label>
+                                            <label for="add-start-time" class="form-label">Start Time <span
+                                                    class="text-danger">*</span></label>
                                             <input type="datetime-local" class="form-control" id="add-start-time"
                                                 name="add-start-time" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-end-time" class="form-label">End Time</label>
+                                            <label for="add-end-time" class="form-label">End Time <span
+                                                    class="text-danger">*</span></label>
                                             <input type="datetime-local" class="form-control" id="add-end-time"
                                                 name="add-end-time" required>
                                         </div>
@@ -89,7 +94,7 @@
                     <!-- Modal Delete-->
                     <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-delete-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="modalCenterTitle">Delete Data</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -117,7 +122,7 @@
                     <!-- Modal Edit-->
                     <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-edit-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit Topic</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -131,26 +136,31 @@
                                                 required readonly>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-name" class="form-label">Name</label>
+                                            <label for="edit-name" class="form-label">Name <span
+                                                    class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="edit-name" name="edit-name"
                                                 required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-description" class="form-label">Description</label>
+                                            <label for="edit-description" class="form-label">Description <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control" id="edit-description" name="edit-description" rows="3" required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-max-attempt" class="form-label">Max Attempt GPT</label>
+                                            <label for="edit-max-attempt" class="form-label">Max Attempt GPT <span
+                                                    class="text-danger">*</span></label>
                                             <input type="number" class="form-control" id="edit-max-attempt"
                                                 name="edit-max-attempt" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-start-time" class="form-label">Start Time</label>
+                                            <label for="edit-start-time" class="form-label">Start Time <span
+                                                    class="text-danger">*</span></label>
                                             <input type="datetime-local" class="form-control" id="edit-start-time"
                                                 name="edit-start-time" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-end-time" class="form-label">End Time</label>
+                                            <label for="edit-end-time" class="form-label">End Time <span
+                                                    class="text-danger">*</span></label>
                                             <input type="datetime-local" class="form-control" id="edit-end-time"
                                                 name="edit-end-time" required>
                                         </div>
@@ -163,7 +173,7 @@
                     <!-- Modal for Uploading File -->
                     <div class="modal fade" id="modalUploadFile" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-upload-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Upload File</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -299,9 +309,35 @@
                     },
                     {
                         data: 'time_start',
+                        render: function(data, type, row) {
+                            // Menggunakan JavaScript Date untuk format tanggal
+                            var startDate = new Date(data);
+                            var formattedStartDate = startDate.toLocaleString('id-ID', {
+                                weekday: 'short', // Hari singkat (Sen, Sel, dst.)
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            return formattedStartDate;
+                        }
                     },
                     {
                         data: 'time_end',
+                        render: function(data, type, row) {
+                            // Format tanggal yang sama untuk waktu selesai
+                            var endDate = new Date(data);
+                            var formattedEndDate = endDate.toLocaleString('id-ID', {
+                                weekday: 'short',
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            return formattedEndDate;
+                        }
                     },
                     @isRole(['student'])
                     @isRole(['assistant'], $code)
@@ -322,18 +358,15 @@
                         render: function(data, type, row) {
                             @isRole(['admin', 'lecturer', 'assistant'], $code)
                             return `
-        <a href="/question/{{ $code }}/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
-            <i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;" data-bs-toggle="tooltip" title="View Details"></i>
-        </a>
-        <a href="/grade/{{ $code }}/${data['guid']}" role="button" class="edit-btn" style="text-decoration: none; margin-right: 10px;">
-            <i class="fa-solid fa fa-percent" style="font-size: 15px; color: yellowgreen;" data-bs-toggle="tooltip" title="Grade"></i>
-        </a>
-        <a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;" data-guid="${data['guid']}">
-            <i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;" data-bs-toggle="tooltip" title="Edit"></i>
-        </a>
-        <a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="${data['guid']}">
-            <i class="fa-solid fa-trash" style="font-size: 15px; color: red;" data-bs-toggle="tooltip" title="Delete"></i>
-        </a>
+       
+    <button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item" href="/question/{{ $code }}/${data['guid']}"><i class="fa-solid fa-circle-info" style="color: blue;"></i> View Details</a></li>
+        <li><a class="dropdown-item" href="/grade/{{ $code }}/${data['guid']}"><i class="fa-solid fa-percent" style="color: yellowgreen;"></i> Grade</a></li>
+        <li><a class="dropdown-item open-edit-dialog" data-guid="${data['guid']}"><i class="fa-solid fa-pen-to-square" style="color: yellow;"></i> Edit</a></li>
+        <li><a class="dropdown-item open-delete-dialog" data-bs-toggle="modal" data-bs-target="#modalDelete" data-guid="${data['guid']}"><i class="fa-solid fa-trash" style="color: red;"></i> Delete</a></li>
+    </ul>
     `;
                             @else
                             var serverTime = new Date();
@@ -409,7 +442,19 @@
 
             $('#delete-form').on('submit', function(e) {
                 e.preventDefault();
-
+                $("#modal-delete-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
                 var guid = $('#delete-id').val();
 
                 $.ajax({
@@ -430,10 +475,13 @@
                         window.location.href = "{{ route('topic', ['code' => $code]) }}";
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $("#modal-delete-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.options.timeOut = 3000;
-                        toastr.error('An error occurred: ' + errorMessage);
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });
@@ -460,10 +508,12 @@
                         $('#modalEdit').modal('show');
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.options.timeOut = 3000;
-                        toastr.error('An error occurred: ' + errorMessage);
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
 
@@ -471,7 +521,19 @@
 
             $('#edit-form').on('submit', function(e) {
                 e.preventDefault();
-
+                $("#modal-edit-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
                 var guid = $('#guid').val();
                 var name = $('#edit-name').val();
                 var description = $('#edit-description').val();
@@ -504,10 +566,13 @@
                         window.location.href = "{{ route('topic', ['code' => $code]) }}";
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $("#modal-edit-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.options.timeOut = 3000;
-                        toastr.error('An error occurred: ' + errorMessage);
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });
@@ -517,7 +582,19 @@
 
             $('#add-form').on('submit', function(e) {
                 e.preventDefault();
-
+                $("#modal-add-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
                 var name = $('#add-name').val();
                 var description = $('#add-description').val();
                 var max_attempt = $('#add-max-attempt').val();
@@ -548,10 +625,13 @@
                         toastr.success('Topic add successfully.');
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $("#modal-add-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.options.timeOut = 3000;
-                        toastr.error('An error occurred: ' + errorMessage);
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });
@@ -568,7 +648,19 @@
             // Handle file upload within the modal
             $('#upload-file-form').on('submit', function(e) {
                 e.preventDefault();
-
+                $("#modal-upload-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
                 var guid = $('#upload-guid').val();
                 var fileData = $('#file-input')[0].files[0];
                 var fileLanguage = $('#file-language').val(); // Get selected language
@@ -596,9 +688,13 @@
                         toastr.success('File uploaded successfully.');
                     },
                     error: function(xhr) {
+                        $("#modal-upload-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.options.timeOut = 3000;
-                        toastr.error('File upload failed: ' + xhr.statusText);
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });

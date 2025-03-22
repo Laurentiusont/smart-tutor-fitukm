@@ -46,7 +46,7 @@
                     <!-- Modal Add Question -->
                     <div class="modal fade" id="modalAdd" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-add-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add Question</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -55,15 +55,18 @@
                                 <div class="modal-body">
                                     <form id="add-form">
                                         <div class="mb-3">
-                                            <label for="add-question" class="form-label">Question</label>
+                                            <label for="add-question" class="form-label">Question <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control" id="add-question" name="add-question" rows="3" required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-answer" class="form-label">Answer</label>
+                                            <label for="add-answer" class="form-label">Answer <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control" id="add-answer" name="add-answer" rows="3" required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-category" class="form-label">Category</label>
+                                            <label for="add-category" class="form-label">Category <span
+                                                    class="text-danger">*</span></label>
                                             <select class="form-select" id="add-category" name="add-category" required>
                                                 <option value="">Select Category</option>
                                                 <option value="remembering">Remembering</option>
@@ -71,15 +74,17 @@
                                             </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-threshold" class="form-label">Threshold</label>
+                                            <label for="add-threshold" class="form-label">Threshold <span
+                                                    class="text-danger">*</span></label>
                                             <input type="number" class="form-control" id="add-threshold"
                                                 name="add-threshold" min="0" max="100" required>
                                             <div id="add-threshold-warning" class="text-danger"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-language" class="form-label">Language</label>
+                                            <label for="add-language" class="form-label">Language <span
+                                                    class="text-danger">*</span></label>
                                             <select class="form-select" id="add-language" name="add-language" required>
-                                                <option value="">Pilih Language</option>
+                                                <option value="">Select Language</option>
                                                 <option value="English">English</option>
                                                 <option value="Indonesian">Indonesian</option>
                                                 <option value="Japanese">Japanese</option>
@@ -95,7 +100,7 @@
                     <!-- Modal Bulk Update Threshold -->
                     <div class="modal fade" id="modalBulkUpdate" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-update-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Bulk Update Threshold</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -104,7 +109,8 @@
                                 <div class="modal-body">
                                     <form id="bulk-update-form">
                                         <div class="mb-3">
-                                            <label for="bulk-threshold" class="form-label">Threshold Value</label>
+                                            <label for="bulk-threshold" class="form-label">Threshold Value <span
+                                                    class="text-danger">*</span></label>
                                             <input type="number" class="form-control" id="bulk-threshold"
                                                 name="bulk-threshold" min="0" max="100" required>
                                             <div id="bulk-threshold-warning" class="text-danger"></div>
@@ -118,7 +124,7 @@
                     <!-- Modal Delete -->
                     <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-delete-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="modalCenterTitle">Delete Data</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -147,7 +153,7 @@
                     <!-- Modal Edit -->
                     <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-edit-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit Question</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -169,21 +175,25 @@
                                             <textarea class="form-control" id="answer" name="answer" rows="3" required readonly></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-question" class="form-label">Question Fix</label>
+                                            <label for="edit-question" class="form-label">Question Fix <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control" id="edit-question" name="edit-question" rows="3" required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-answer" class="form-label">Answer Fix</label>
+                                            <label for="edit-answer" class="form-label">Answer Fix <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control" id="edit-answer" name="edit-answer" rows="3" required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-threshold" class="form-label">Threshold</label>
+                                            <label for="edit-threshold" class="form-label">Threshold <span
+                                                    class="text-danger">*</span></label>
                                             <input type="number" class="form-control" id="edit-threshold"
                                                 name="edit-threshold" min="0" max="100" required>
                                             <div id="edit-threshold-warning" class="text-danger"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-language" class="form-label">Language</label>
+                                            <label for="edit-language" class="form-label">Language <span
+                                                    class="text-danger">*</span></label>
                                             <select class="form-select" id="edit-language" name="edit-language" required>
                                                 <option value="">Select Language</option>
                                                 <option value="english">English</option>
@@ -192,7 +202,8 @@
                                             </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-category" class="form-label">Category</label>
+                                            <label for="edit-category" class="form-label">Category <span
+                                                    class="text-danger">*</span></label>
                                             <select class="form-select" id="edit-category" name="edit-category" required>
                                                 <option value="">Select Category</option>
                                                 <option value="remembering">Remembering</option>
@@ -542,6 +553,20 @@
             $('#delete-form').on('submit', function(e) {
                 e.preventDefault();
 
+                $("#modal-delete-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
+
                 var guid = $('#delete-id').val();
 
                 $.ajax({
@@ -564,7 +589,7 @@
                         toastr.options.timeOut = 1000; // Set timeout for the toast message
 
                         // Show success message
-                        toastr.success("Data has been updated successfully.", "Success");
+                        toastr.success("Data has been deleted successfully.", "Success");
 
                         // Redirect to the 'question' route
                         window.location.href =
@@ -572,16 +597,13 @@
                     },
 
                     error: function(xhr, status, error) {
-                        $.unblockUI();
-
-                        // Get error message from response or fallback to status and statusText
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
-
-                        // Configure toastr options for error
+                        $("#modal-delete-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-
-                        // Show error message
-                        toastr.error(errorMessage, "Error");
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });
@@ -630,6 +652,22 @@
             });
             $('#edit-form').on('submit', function(e) {
                 e.preventDefault();
+
+
+                $("#modal-edit-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
+
                 var guid = $('#guid').val();
                 var question = $('#edit-question').val();
                 var answer = $('#edit-answer').val();
@@ -662,9 +700,13 @@
                             "{{ route('question', ['guid' => $guid, 'code' => $code]) }}";
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $("#modal-edit-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.error('Terjadi kesalahan: ' + errorMessage, "Error");
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });
@@ -674,6 +716,19 @@
 
             $('#add-form').on('submit', function(e) {
                 e.preventDefault();
+                $("#modal-add-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
                 var question = $('#add-question').val();
                 var answer = $('#add-answer').val();
                 var category = $('#add-category').val();
@@ -715,17 +770,13 @@
                         toastr.success("Data added successfully!", "Success");
                     },
                     error: function(xhr, status, error) {
-                        $.unblockUI();
-
-                        // Parse the error message
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $("#modal-add-block").unblock();
                         var jsonResponse = JSON.parse(xhr.responseText);
-
-                        // Configure toastr options for error
                         toastr.options.closeButton = true;
-
-                        // Display error message
-                        toastr.error(jsonResponse['message'] || errorMessage, "Error");
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
 
                 });

@@ -36,7 +36,7 @@
                     <!-- Modal Add Student -->
                     <div class="modal fade" id="modalAdd" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-add-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add Data</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -107,6 +107,7 @@
     <script src="{{ asset('./assets/dashboard/block-ui/block-ui.js') }}"></script>
     <script src="{{ asset('./assets/js/blockui.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 @endsection
 @section('custom-javascript')
     <script type="text/javascript">
@@ -241,6 +242,19 @@
 
             $('#add-form').on('submit', function(e) {
                 e.preventDefault();
+                $("#modal-add-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
                 var student = $('#user-tag').val();
                 const userObject = JSON.parse(student);
                 var userString = [];
@@ -266,9 +280,13 @@
                         window.location.href = "{{ route('student', ['code' => $code]) }}";
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $("#modal-add-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.error('An error occurred: ' + errorMessage, 'Error');
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });
@@ -353,8 +371,8 @@
                                             role="option"
                                             >
                                             ${a.avatar ? `<div class='tagify__dropdown__item__avatar-wrap'>
-                                                                                                                                                                                                                                                                                                                    <img onerror="this.style.visibility='hidden'" src="${a.avatar}">
-                                                                                                                                                                                                                                                                                                                    </div>`: ""}
+                                                                                                                                                                                                                                                                                                                                <img onerror="this.style.visibility='hidden'" src="${a.avatar}">
+                                                                                                                                                                                                                                                                                                                                </div>`: ""}
                                             <strong>${a.name}</strong>
                                             <span>${a.email}</span>
                                             </div>

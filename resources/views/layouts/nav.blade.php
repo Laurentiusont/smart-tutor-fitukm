@@ -22,6 +22,11 @@
         </div>
         <div class="offcanvas-body">
             <ul class="text-decoration-none list-unstyled">
+                <li class="nav-item my-3">
+                    <h3 class=" ms-2 text-uppercase font-weight-bolder opacity-6">
+                        Feature
+                    </h3>
+                </li>
                 <li class="nav-item">
                     <a class=" d-flex  nav-link {{ Request::is('dashboard') ? 'active' : '' }}"
                         href="{{ url('dashboard') }}">
@@ -34,11 +39,6 @@
                         </div>
                         <p class="m-1 ">Quiz</p>
                     </a>
-                </li>
-                <li class="nav-item my-3">
-                    <h3 class=" ms-2 text-uppercase font-weight-bolder opacity-6">
-                        Feature
-                    </h3>
                 </li>
                 <li class="nav-item">
                     <a class="d-flex  nav-link {{ Request::is('user/profile') ? 'active' : '' }}"
@@ -81,7 +81,18 @@
                         </a>
                     </li>
                 @endisRole
-
+                <li class="nav-item">
+                    <a class="d-flex nav-link {{ Request::is('zoom') ? 'active' : '' }}  " href="{{ url('zoom') }}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <img src="{{ asset('assets/img/zoom.png') }}" width="14px" height="14px"
+                                viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <title>shop </title>
+                        </div>
+                        <p class="m-1 ">Online Meeting</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="d-flex  nav-link {{ Request::is('course') ? 'active' : '' }} {{ Request::is('topic/*') ? 'active open' : '' }} {{ Request::is('question/*') ? 'active open' : '' }} {{ Request::is('grade/*') ? 'active open' : '' }} {{ Request::is('user/answer/*') ? 'active open' : '' }} {{ Request::is('answer/detail/*') ? 'active open' : '' }} {{ Request::is('student/*') ? 'active open' : '' }} {{ Request::is('assistant/*') ? 'active open' : '' }}"
                         href="{{ url('course') }}">

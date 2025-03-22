@@ -25,24 +25,28 @@
                     <div class="card-body">
                         <form id="form">
                             <div class="mb-3">
-                                <label class="form-label" for="basic-default-fullname">Id</label>
+                                <label class="form-label" for="basic-default-fullname">Id <span
+                                        class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="id" placeholder="Input Id" required />
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="basic-default-fullname">Name</label>
+                                <label class="form-label" for="basic-default-fullname">Name <span
+                                        class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" placeholder="Input Name"
                                     required />
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="basic-default-fullname">Username</label>
+                                <label class="form-label" for="basic-default-fullname">Username <span
+                                        class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="username" placeholder="Username" required />
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="basic-default-fullname">Email</label>
+                                <label class="form-label" for="basic-default-fullname">Email <span
+                                        class="text-danger">*</span></label>
                                 <input type="email" class="form-control" id="email" placeholder="Email" required />
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="role">Role</label>
+                                <label class="form-label" for="role">Role <span class="text-danger">*</span></label>
                                 <select class="form-select" id="role" required>
                                     <option value="">Select Role</option>
                                     <option value="120014de-1d48-4947-b801-afe701bb19b8">
@@ -76,12 +80,27 @@
     <script src="{{ asset('./assets/dashboard/datatables-rowgroup/datatables.rowgroup.js') }}"></script>
     <script src="{{ asset('./assets/dashboard/datatables-rowgroup-bs5/rowgroup.bootstrap5.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 @endsection
 @section('custom-javascript')
     <script type="text/javascript">
         $(document).ready(function() {
             $('#form').on('submit', function(e) {
                 e.preventDefault();
+
+                $("#card-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
 
                 var id = $('#id').val();
                 var name = $('#name').val();
@@ -110,6 +129,7 @@
                         window.location.href = "{{ route('index-user') }}";
                     },
                     error: function(xhr, status, error) {
+                        $("#card-block").unblock();
                         var errorMessage = xhr.status + ': ' + xhr.statusText;
                         toastr.options.closeButton = true;
                         toastr.error('An error occurred: ' + errorMessage, 'Error');

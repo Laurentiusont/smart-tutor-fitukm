@@ -13,6 +13,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ZoomController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,6 +54,7 @@ Route::group([
 ], function ($router) {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/question', [QuestionController::class, 'generate'])->name('question-generate')->middleware('role:admin,lecturer');
+    Route::get('/zoom', [ZoomController::class, 'index'])->name('zoom');
     Route::get('/course', [CourseController::class, 'index'])->name('course');
     Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot');
     Route::get('/topic/{code}', [TopicController::class, 'index'])->name('topic');

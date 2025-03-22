@@ -64,7 +64,7 @@
                     <!-- Modal Add Course -->
                     <div class="modal fade" id="modalAdd" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-add-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add Course</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -73,21 +73,25 @@
                                 <div class="modal-body">
                                     <form id="add-form">
                                         <div class="mb-3">
-                                            <label for="add-code" class="form-label">Code</label>
+                                            <label for="add-code" class="form-label">Code <span
+                                                    class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="add-code" name="add-code"
                                                 required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-name" class="form-label">Name</label>
+                                            <label for="add-name" class="form-label">Name <span
+                                                    class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="add-name" name="add-name"
                                                 required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-description" class="form-label">Description</label>
+                                            <label for="add-description" class="form-label">Description <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control" id="add-description" name="add-description" rows="3" required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="add-status" class="form-label">Status</label>
+                                            <label for="add-status" class="form-label">Status <span
+                                                    class="text-danger">*</span></label>
                                             <select class="form-control" id="add-status" name="add-status" required>
                                                 <option value="private" selected>Private</option>
                                                 <option value="public">Public</option>
@@ -103,7 +107,7 @@
                     <!-- Modal Edit Course -->
                     <div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
+                            <div class="modal-content" id="modal-edit-block">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit Course</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -112,21 +116,25 @@
                                 <div class="modal-body">
                                     <form id="edit-form">
                                         <div class="mb-3">
-                                            <label for="edit-code" class="form-label">Code</label>
+                                            <label for="edit-code" class="form-label">Code <span
+                                                    class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="edit-code" name="edit-code"
                                                 required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-name" class="form-label">Name</label>
+                                            <label for="edit-name" class="form-label">Name <span
+                                                    class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="edit-name" name="edit-name"
                                                 required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-description" class="form-label">Description</label>
+                                            <label for="edit-description" class="form-label">Description <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control" id="edit-description" name="edit-description" rows="3" required></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="edit-status" class="form-label">Status</label>
+                                            <label for="edit-status" class="form-label">Status <span
+                                                    class="text-danger">*</span></label>
                                             <select class="form-control" id="edit-status" name="edit-status" required>
                                                 <option value="private">Private</option>
                                                 <option value="public">Public</option>
@@ -157,6 +165,7 @@
     <script src="{{ asset('./assets/dashboard/datatables-rowgroup/datatables.rowgroup.js') }}"></script>
     <script src="{{ asset('./assets/dashboard/datatables-rowgroup-bs5/rowgroup.bootstrap5.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 @endsection
 @section('custom-javascript')
     <script type="text/javascript">
@@ -166,6 +175,7 @@
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
+                "scrollY": false,
                 "ajax": {
                     "url": "{{ env('URL_API') }}/api/v1/course",
                     "type": "GET",
@@ -195,23 +205,18 @@
                         title: "Actions",
                         render: function(data, type, row) {
                             return `
-        <a href="/topic/${data['code']}" role="button" style="text-decoration: none; margin-right: 10px;">
-            <i class="fa-solid fa-circle-info" style="font-size: 15px; color: blue;" data-bs-toggle="tooltip" title="View Topic"></i>
-        </a>
+    <button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+      
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item" href="/topic/${data['code']}"><i class="fa-solid fa-circle-info" style="color: blue;"></i> View Topic</a></li>
         @isRole(['admin', 'lecturer', 'assistant'])
-<a href="/student/${data['code']}" role="button" style="text-decoration: none; margin-right: 10px;">
-            <i class="fa-solid fa fa-users" style="font-size: 15px; color: purple;" data-bs-toggle="tooltip" title="View Students"></i>
-        </a>
-        <a href="/assistant/${data['code']}" role="button" style="text-decoration: none; margin-right: 10px;">
-            <i class="fa-solid fa fa-handshake-o" style="font-size: 15px; color: orange;" data-bs-toggle="tooltip" title="View Assistants"></i>
-        </a>
-        <a role="button" class="edit-btn open-edit-dialog" style="text-decoration: none; margin-right: 10px;" data-code="${data['code']}">
-            <i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: yellow;" data-bs-toggle="tooltip" title="Edit Course"></i>
-        </a>
-        <a role="button" class="delete-btn open-delete-dialog" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#modalDelete" data-code="${data['code']}">
-            <i class="fa-solid fa-trash" style="font-size: 15px; color: red;" data-bs-toggle="tooltip" title="Delete Course"></i>
-        </a>
+<li><a class="dropdown-item" href="/student/${data['code']}"><i class="fa-solid fa-users" style="color: green;"></i> View Students</a></li> <!-- Mengganti warna ungu menjadi hijau -->
+        <li><a class="dropdown-item" href="/assistant/${data['code']}"><i class="fa-solid fa-handshake-o" style="color: orange;"></i> View Assistants</a></li>
+        <li><a class="dropdown-item open-edit-dialog" data-code="${data['code']}"><i class="fa-solid fa-pen-to-square" style="color: yellow;"></i> Edit Course</a></li>
+        <li><a class="dropdown-item open-delete-dialog" data-bs-toggle="modal" data-bs-target="#modalDelete" data-code="${data['code']}"><i class="fa-solid fa-trash" style="color: red;"></i> Delete Course</a></li>
 @endisRole
+    </ul>
     `;
                         },
                         "orderable": false,
@@ -328,6 +333,20 @@
                 var description = $('#edit-description').val();
                 var status = $('#edit-status').val(); // Ambil status dari input select
 
+                $("#modal-edit-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
+
                 $.ajax({
                     type: "PUT",
                     url: "{{ env('URL_API') }}/api/v1/course",
@@ -351,9 +370,13 @@
                         toastr.success("Success update data", "Success");
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $("#modal-edit-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.error("Error occurred: " + errorMessage, "Error");
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });
@@ -361,6 +384,19 @@
             $('#add-form').on('submit', function(e) {
                 e.preventDefault();
 
+                $("#modal-add-block").block({
+                    message: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>',
+                    css: {
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#00796b',
+                        fontSize: '1.2rem',
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.8,
+                    },
+                });
                 var code = $('#add-code').val();
                 var name = $('#add-name').val();
                 var description = $('#add-description').val();
@@ -389,9 +425,13 @@
                         toastr.success("Success add data", "Success");
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $("#modal-add-block").unblock();
+                        var jsonResponse = JSON.parse(xhr.responseText);
                         toastr.options.closeButton = true;
-                        toastr.error("Error occurred: " + errorMessage, "Error");
+                        toastr.error(
+                            jsonResponse['message'],
+                            "Error",
+                        );
                     }
                 });
             });
